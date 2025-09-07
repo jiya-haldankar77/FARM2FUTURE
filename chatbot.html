@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm2Future - Chatbot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h2>Farm Assistant</h2>
+    <nav>
+      <a href="dashboard.html">Back</a>
+      <a href="login.html" onclick="logout()">Logout</a>
+    </nav>
+  </header>
+
+  <div class="chatbox" id="chatbox">
+    <div class="bot">Hello! How can I help you today?</div>
+  </div>
+
+  <div class="questions">
+    <!-- 🌱 Crop & Soil -->
+<button onclick="askQuestion('fertilizer')">What fertilizer should I use?</button>
+<button onclick="askQuestion('soil')">How do I test my soil?</button>
+<button onclick="askQuestion('soilhealth')">How to improve soil health?</button>
+<button onclick="askQuestion('seeds')">Where can I get good quality seeds?</button>
+<button onclick="askQuestion('hybridseeds')">What are hybrid seeds?</button>
+<button onclick="askQuestion('tips')">General tips for increasing yield?</button>
+<button onclick="askQuestion('croprotation')">What is crop rotation?</button>
+<button onclick="askQuestion('intercropping')">What is intercropping?</button>
+<button onclick="askQuestion('covercrops')">What are cover crops?</button>
+<button onclick="askQuestion('weeds')">How to control weeds?</button>
+
+<!-- 💧 Water & Irrigation -->
+<button onclick="askQuestion('water')">How to save water in farming?</button>
+<button onclick="askQuestion('irrigation')">What are different irrigation methods?</button>
+<button onclick="askQuestion('drip')">What is drip irrigation?</button>
+<button onclick="askQuestion('sprinkler')">What is sprinkler irrigation?</button>
+<button onclick="askQuestion('rainwater')">How can I harvest rainwater?</button>
+<button onclick="askQuestion('mulching')">What is mulching?</button>
+<button onclick="askQuestion('precisionirrigation')">What is precision irrigation?</button>
+<button onclick="askQuestion('drought')">How to farm during drought?</button>
+<button onclick="askQuestion('waterquality')">How to test water quality?</button>
+<button onclick="askQuestion('flood')">What to do if fields are flooded?</button>
+
+<!-- 🐛 Pests & Diseases -->
+<button onclick="askQuestion('pest')">How to control pests?</button>
+<button onclick="askQuestion('organicpest')">What organic methods for pest control?</button>
+<button onclick="askQuestion('neemoil')">How to use neem oil for pests?</button>
+<button onclick="askQuestion('biocontrol')">What is biological pest control?</button>
+<button onclick="askQuestion('disease')">How to prevent crop diseases?</button>
+<button onclick="askQuestion('fungus')">How to control fungal infections?</button>
+<button onclick="askQuestion('insects')">What to do about insect attacks?</button>
+<button onclick="askQuestion('rodents')">How to protect crops from rodents?</button>
+<button onclick="askQuestion('storagepests')">How to protect grains from pests in storage?</button>
+<button onclick="askQuestion('ipm')">What is Integrated Pest Management?</button>
+
+<!-- ☀️ Weather & Climate -->
+<button onclick="askQuestion('weather')">How to check today’s weather?</button>
+<button onclick="askQuestion('climate')">How to deal with climate change in farming?</button>
+<button onclick="askQuestion('frost')">How to protect crops from frost?</button>
+<button onclick="askQuestion('heatwave')">What to do during a heatwave?</button>
+<button onclick="askQuestion('rainfall')">How to predict rainfall?</button>
+<button onclick="askQuestion('monsoon')">How to prepare for monsoon farming?</button>
+<button onclick="askQuestion('droughtcrops')">Which crops grow best in drought?</button>
+<button onclick="askQuestion('floodcrops')">Which crops can tolerate floods?</button>
+<button onclick="askQuestion('wind')">How to protect crops from strong winds?</button>
+<button onclick="askQuestion('climatecrops')">Which crops adapt to climate change?</button>
+
+<!-- 🛠️ Technology & Modern Farming -->
+<button onclick="askQuestion('technology')">What new technologies can help farming?</button>
+<button onclick="askQuestion('machines')">What machines can small farmers use?</button>
+<button onclick="askQuestion('solar')">How can solar energy help in farming?</button>
+<button onclick="askQuestion('drones')">How are drones used in farming?</button>
+<button onclick="askQuestion('sensors')">What sensors are used in smart farming?</button>
+<button onclick="askQuestion('ai')">How AI can help farming?</button>
+<button onclick="askQuestion('hydroponics')">What is hydroponics farming?</button>
+<button onclick="askQuestion('aquaponics')">What is aquaponics farming?</button>
+<button onclick="askQuestion('aquaculture')">What is aquaculture farming?</button>
+<button onclick="askQuestion('greenhouse')">What is greenhouse farming?</button>
+
+<!-- 📈 Market, Finance & Govt -->
+<button onclick="askQuestion('market')">Where to check crop prices?</button>
+<button onclick="askQuestion('mandi')">How to sell crops in mandi?</button>
+<button onclick="askQuestion('export')">Can farmers export crops?</button>
+<button onclick="askQuestion('loan')">How can I get a farm loan?</button>
+<button onclick="askQuestion('insurance')">What is crop insurance?</button>
+<button onclick="askQuestion('scheme')">Tell me about govt schemes for farmers</button>
+<button onclick="askQuestion('subsidy')">What subsidies are available for farmers?</button>
+<button onclick="askQuestion('training')">Where can I get farmer training?</button>
+<button onclick="askQuestion('fpos')">What are Farmer Producer Organizations (FPOs)?</button>
+<button onclick="askQuestion('storage')">How to store harvested crops safely?</button>
+
+<!-- 🌾 Other Farming Practices -->
+<button onclick="askQuestion('organicfarming')">What is organic farming?</button>
+<button onclick="askQuestion('permaculture')">What is permaculture?</button>
+<button onclick="askQuestion('verticalfarming')">What is vertical farming?</button>
+<button onclick="askQuestion('mixedfarming')">What is mixed farming?</button>
+<button onclick="askQuestion('livestock')">How to integrate livestock in farming?</button>
+<button onclick="askQuestion('beekeeping')">What is the benefit of beekeeping?</button>
+<button onclick="askQuestion('fishfarming')">What is fish farming?</button>
+<button onclick="askQuestion('silkworm')">What is sericulture (silk farming)?</button>
+<button onclick="askQuestion('goatfarming')">How to start goat farming?</button>
+<button onclick="askQuestion('poultry')">How to start poultry farming?</button>
+</div> 
+<script src="web.js"></script>
+</body>
+</html>

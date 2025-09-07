@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm2Future - Water Usage</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h2>💧 Water Usage Tracker</h2>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="chatbot.html">Chatbot</a>
+      <a href="market.html">Marketplace</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card tracker-section">
+      <h3>Track Your Daily Water Usage</h3>
+      <form id="waterForm">
+        <label for="date">📅 Date:</label>
+        <input type="date" id="date" required>
+
+        <label for="state">🏞️ Select State:</label>
+        <select id="state" required>
+          <option value="">Select a State</option>
+        </select>
+
+        <label for="crop">🌾 Select Crop:</label>
+        <select id="crop" required>
+          <option value="">Select a Crop</option>
+        </select>
+
+        <label for="amount">💧 Water Used (litres):</label>
+        <input type="number" id="amount" placeholder="Enter litres used" required>
+
+        <button type="submit">Add Entry</button>
+      </form>
+    </section>
+
+    <section class="card summary-section">
+      <h3>Usage Summary</h3>
+      <p><strong>Total Water Used:</strong> <span id="totalUsage">0</span> litres</p>
+      <p><strong>Average Daily Usage:</strong> <span id="avgUsage">0</span> litres</p>
+    </section>
+
+    <section class="card advisor-section">
+      <h3>Smart Water Advisor</h3>
+      <p id="advisorMessage">Select a state, crop and enter your usage to get advice.</p>
+    </section>
+
+    <section class="card chart-section">
+      <h3>Water Usage Trend</h3>
+      <canvas id="waterChart" width="400" height="200"></canvas>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="web.js"></script>
+  <script>
+    const form = document.getElementById('waterForm');
+    const totalUsage = document.getElementById('totalUsage');
+    const avgUsage = document.getElementById('avgUsage');
+    const advisorMessage = document.getElementById('advisorMessage');
+    const ctx = document.getElementById('waterChart').getContext('2d');
+
+    // Crop water requirements (litres/day per acre approx)
+    const cropRequirements = {
+      rice: 5000,
+      wheat: 2500,
+      sugarcane: 7000,
+      groundnut: 3000,
+      cotton: 4000,
+      maize: 3500,
+      banana: 6000,
+      soybean: 3200,
+      jute: 4500,
+      potato: 4000,
+      millet: 3000,
+      tea: 5000,
+      apple: 4000,
+      coconut: 3500,
+      rubber: 5000,
+      bajra: 3000,
+      mustard: 3200
+    };
+
+    let usageData = [];
+    let labels = [];
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Daily Water Usage (litres)',
+          data: usageData,
+          borderColor: 'blue',
+          backgroundColor: 'lightblue',
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const date = document.getElementById('date').value;
+      const amount = parseInt(document.getElementById('amount').value);
+      const crop = document.getElementById('crop').value.toLowerCase();
+      const state = document.getElementById('state').value;
+
+      // Save to chart
+      labels.push(date);
+      usageData.push(amount);
+      chart.update();
+
+      // Update totals
+      const total = usageData.reduce((a, b) => a + b, 0);
+      totalUsage.textContent = total;
+      avgUsage.textContent = (total / usageData.length).toFixed(1);
+
+      // Advisor logic
+      const recommended = cropRequirements[crop] || 5000;
+      let advice = "";
+
+      if (amount < recommended * 0.8) {
+        advice = `⚠️ You used less water than needed for ${crop} in ${state}. Consider adding more irrigation.`;
+      } else if (amount > recommended * 1.2) {
+        advice = `🚨 You used too much water for ${crop} in ${state}. Try drip irrigation or scheduled watering to save water.`;
+      } else {
+        advice = `✅ Perfect! Your water usage for ${crop} in ${state} is optimal.`;
+      }
+
+      advisorMessage.textContent = advice;
+      form.reset();
+    });
+  </script>
+</body>
+</html>

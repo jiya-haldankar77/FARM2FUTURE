@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm2Future - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-bg">
+  <div class="login-container">
+    <h1 class="title">Farm2Future</h1>
+    <div class="login-card">
+      <h2>Login</h2>
+      <input type="text" id="username" placeholder="Enter Username">
+      <input type="password" id="password" placeholder="Enter Password">
+      <button onclick="login()">Login</button>
+    </div>
+
+    <div id="logout-msg"></div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('msg') === 'thanks') {
+      document.getElementById('logout-msg').innerText = "✨ Thanks for visiting! ✨";
+  }
+</script>
+
+  </div>
+  <script src="web.js"></script>
+</body>
+</html>

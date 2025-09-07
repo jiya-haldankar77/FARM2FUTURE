@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Farm2Future</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Farm2Future - Cart & Checkout 🛒</h1>
+    <nav>
+      <a href="dashboard.html">Home</a>
+      <a href="market.html">Marketplace</a>
+      <a href="index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>My Cart</h2>
+    <div class="checkout-container">
+      <!-- Cart items will be rendered here -->
+    </div>
+
+    <div class="checkout-actions" style="margin-top:20px;">
+      <p><b>Total:</b> ₹<span id="cart-total">0</span></p>
+      <button id="buy-now" style="padding:10px 20px; background:#2e7d32; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">💳 Buy Now</button>
+    </div>
+  </main>
+
+  <script src="checkout.js"></script>
+</body>
+</html>
