@@ -536,7 +536,10 @@ async function analyzeImage() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       result = await getMockAnalysis();
     } else {
-      const response = await fetch('http://localhost:5001/api/analyze-soil', {
+      const API_URL = window.location.hostname === 'localhost' 
+        ? 'http://localhost:10000/api' 
+        : `${window.location.protocol}//${window.location.host}/api`;
+      const response = await fetch(`${API_URL}/analyze-soil`, {
         method: 'POST',
         body: formData
       });

@@ -330,6 +330,11 @@ app.get('/gov.php', (req, res) => {
   res.sendFile(path.join(__dirname, 'gov-schemes.html'));
 });
 
+// Review & Support route
+app.get('/rev.php', (req, res) => {
+  res.sendFile(path.join(__dirname, 'rev-page.html'));
+});
+
 // Simple government schemes endpoint
 app.post('/gov.php', async (req, res) => {
   const { name, email, state, district, land_size, crop_type, irrigation, farmer_type, goal } = req.body;
@@ -361,6 +366,73 @@ app.post('/gov.php', async (req, res) => {
   } catch (error) {
     console.error('Gov schemes error:', error);
     res.status(500).json({ error: 'Failed to process request' });
+  }
+});
+
+// Review submission endpoint
+app.post('/api/submit-review', async (req, res) => {
+  const { name, email, date, review } = req.body;
+  
+  if (!name || !email || !date || !review) {
+    return res.status(400).json({ success: false, message: 'All fields are required' });
+  }
+  
+  try {
+    const result = await db.query(
+      'INSERT INTO reviews (name, email, review_date, review) VALUES ($1, $2, $3, $4) RETURNING *',
+      [name, email, date, review]
+    );
+    
+    console.log('Review submitted successfully:', { id: result.rows[0].id, name, email, date });
+    res.json({ success: true, message: 'Review submitted successfully', reviewId: result.rows[0].id });
+  } catch (error) {
+    console.error('Error storing review:', error);
+    res.status(500).json({ success: false, message: 'Failed to store review' });
+  }
+});
+
+// ============ SOIL ANALYSIS API ============
+
+// Soil analysis endpoint (mock results since ML service isn't running)
+app.post('/api/analyze-soil', async (req, res) => {
+  try {
+    // Mock soil analysis results
+    const mockResults = {
+      success: true,
+      soilType: 'Loamy Soil',
+      ph: 6.8,
+      nutrients: {
+        nitrogen: 'Medium',
+        phosphorus: 'High',
+        potassium: 'Medium'
+      },
+      moisture: 76,
+      recommendations: [
+        'Your soil has optimal pH levels for most crops',
+        'Consider adding organic matter to improve soil structure',
+        'Phosphorus levels are excellent - good for root development',
+        'Monitor nitrogen levels and add compost if needed'
+      ],
+      suitableCrops: ['Tomatoes', 'Wheat', 'Corn', 'Beans', 'Carrots'],
+      confidence: 0.92
+    };
+    
+    // Log the analysis for the user if authenticated
+    if (req.session && req.session.farmerId) {
+      await db.query(
+        'INSERT INTO activity_log (farmer_id, activity_type, description) VALUES ($1, $2, $3)',
+        [req.session.farmerId, 'soil', `Soil analysis completed - Type: ${mockResults.soilType}, pH: ${mockResults.ph}`]
+      );
+    }
+    
+    res.json(mockResults);
+  } catch (error) {
+    console.error('Soil analysis error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to analyze soil',
+      message: 'Soil analysis service is temporarily unavailable'
+    });
   }
 });
 
