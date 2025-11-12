@@ -12,8 +12,10 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: true,
-  credentials: true
+  origin: ['https://farm2future.onrender.com', 'http://localhost:10000', 'http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -298,6 +300,15 @@ app.get('/api/check-session', (req, res) => {
 });
 
 // ============ BASIC ROUTES ============
+
+// API Test route
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    status: 'success', 
+    message: 'Farm2Future API is working!',
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Home route
 app.get('/', (req, res) => {
