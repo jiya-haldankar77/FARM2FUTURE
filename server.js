@@ -1,9 +1,10 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
-const path = require('path');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
+const path = require('path');
+const fileUpload = require('express-fileupload');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 require('dotenv').config();
@@ -19,6 +20,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload());
 
 // Session configuration
 app.use(session({
@@ -392,13 +394,54 @@ app.post('/api/submit-review', async (req, res) => {
 
 // ============ SOIL ANALYSIS API ============
 
-// Soil analysis endpoint (mock results since ML service isn't running)
+// Soil analysis endpoint - connects to your ML model
 app.post('/api/analyze-soil', async (req, res) => {
   try {
     console.log('Soil analysis request received');
     
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Try to connect to your actual ML API first
+    try {
+      const fetch = require('node-fetch');
+      const FormData = require('form-data');
+      
+      const formData = new FormData();
+      
+      // Handle the uploaded image
+      if (req.files && req.files.image) {
+        formData.append('image', req.files.image.data, req.files.image.name);
+      } else if (req.body) {
+        // Handle base64 or other formats
+        formData.append('image', req.body);
+      }
+      
+      console.log('Connecting to ML API at localhost:5001...');
+      
+      const mlResponse = await fetch('http://localhost:5001/analyze-soil', {
+        method: 'POST',
+        body: formData,
+        timeout: 10000 // 10 second timeout
+      });
+      
+      if (mlResponse.ok) {
+        const mlResult = await mlResponse.json();
+        console.log('ML API response:', mlResult);
+        
+        // Log the analysis for the user if authenticated
+        if (req.session && req.session.farmerId && mlResult.success) {
+          await db.query(
+            'INSERT INTO activity_log (farmer_id, activity_type, description) VALUES ($1, $2, $3)',
+            [req.session.farmerId, 'soil', `Soil analysis completed - Type: ${mlResult.soil_type}, pH: ${mlResult.ph}`]
+          );
+        }
+        
+        return res.json(mlResult);
+      }
+    } catch (mlError) {
+      console.log('ML API not available, using mock data:', mlError.message);
+    }
+    
+    // Fallback to mock data if ML API is not available
+    console.log('Using mock soil analysis data');
     
     // Mock soil analysis results matching your ML model format
     const soilTypes = ['black', 'cider', 'yellow', 'laterite', 'peat'];
