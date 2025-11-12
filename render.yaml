@@ -1,20 +1,47 @@
+databases:
+  - name: farm2future-db
+    plan: free
+    databaseName: farm2future
+
 services:
+  # 🌿 Node.js Frontend + MySQL Backend
   - type: web
     name: farm2future
     env: node
-    plan: free
     buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
+      # PORT used in your server: process.env.PORT || 3000
       - key: PORT
         value: 10000
-      - key: DATABASE_URL
+      # Database credentials pulled from the managed DB created above
+      - key: DB_HOST
         fromDatabase:
           name: farm2future-db
-          property: connectionString
+          property: host
+      - key: DB_USER
+        fromDatabase:
+          name: farm2future-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: farm2future-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: farm2future-db
+          property: database
 
-databases:
-  - name: farm2future-db
-    plan: free
+  # 🤖 Flask ML Model API (Soil Image Analysis)
+  - type: web
+    name: farm2future-ml
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:5001
+    envVars:
+      - key: PORT
+        value: 5001
+      - key: PYTHON_VERSION
+        value: 3.9
