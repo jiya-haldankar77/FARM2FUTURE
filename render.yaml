@@ -9,14 +9,10 @@ services:
         value: production
       - key: PORT
         value: 10000
-      - key: DB_HOST
+      - key: DATABASE_URL
         fromDatabase:
           name: farm2future-db
           property: connectionString
 
 databases:
   - name: farm2future-db
-    databaseName: farm2future
-    user: farm2future_user
-    plan: free
-    region: oregon
