@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Login Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        input, button { padding: 10px; margin: 5px; }
+        #log { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Farm2Future Login Debug</h1>
+    
+    <div>
+        <input type="email" id="email" placeholder="Email" value="test@example.com">
+        <input type="password" id="password" placeholder="Password" value="test123">
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="testAPI()">Test API</button>
+        <button onclick="clearLog()">Clear Log</button>
+    </div>
+    
+    <div id="results"></div>
+    <div id="log"></div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:10000/api' 
+            : `${window.location.protocol}//${window.location.host}/api`;
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            console.log(message);
+        }
+        
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        async function testAPI() {
+            log(`Testing API connection to: ${API_URL}/test`);
+            
+            try {
+                const response = await fetch(`${API_URL}/test`);
+                log(`Response status: ${response.status}`);
+                log(`Response headers: ${JSON.stringify([...response.headers])}`);
+                
+                const data = await response.json();
+                log(`Response data: ${JSON.stringify(data)}`);
+                
+                document.getElementById('results').innerHTML += `
+                    <div class="result success">✅ API Test Success: ${data.message}</div>
+                `;
+            } catch (error) {
+                log(`API Test Error: ${error.message}`);
+                log(`Error stack: ${error.stack}`);
+                
+                document.getElementById('results').innerHTML += `
+                    <div class="result error">❌ API Test Failed: ${error.message}</div>
+                `;
+            }
+        }
+        
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            log(`Testing login to: ${API_URL}/login`);
+            log(`Email: ${email}, Password: ${password}`);
+            
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                });
+                
+                log(`Login response status: ${response.status}`);
+                log(`Login response headers: ${JSON.stringify([...response.headers])}`);
+                
+                const data = await response.json();
+                log(`Login response data: ${JSON.stringify(data)}`);
+                
+                document.getElementById('results').innerHTML += `
+                    <div class="result ${response.ok ? 'success' : 'error'}">
+                        ${response.ok ? '✅' : '❌'} Login Response: ${JSON.stringify(data)}
+                    </div>
+                `;
+            } catch (error) {
+                log(`Login Error: ${error.message}`);
+                log(`Error stack: ${error.stack}`);
+                
+                document.getElementById('results').innerHTML += `
+                    <div class="result error">❌ Login Failed: ${error.message}</div>
+                `;
+            }
+        }
+        
+        // Auto-test on page load
+        window.onload = function() {
+            log(`Page loaded. API_URL: ${API_URL}`);
+            log(`Current hostname: ${window.location.hostname}`);
+            log(`Current protocol: ${window.location.protocol}`);
+            log(`Current host: ${window.location.host}`);
+            testAPI();
+        };
+    </script>
+</body>
+</html>
