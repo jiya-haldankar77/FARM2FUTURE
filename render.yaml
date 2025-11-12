@@ -13,8 +13,10 @@ services:
         fromDatabase:
           name: farm2future-db
           property: connectionString
-  - type: database
-    name: farm2future-db
+
+databases:
+  - name: farm2future-db
     databaseName: farm2future
     user: farm2future_user
     plan: free
+    region: oregon
