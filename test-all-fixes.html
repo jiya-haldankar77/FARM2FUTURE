@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Farm2Future - All Features Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; margin: 5px; }
+        #log { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; max-height: 400px; overflow-y: auto; }
+        .status { padding: 5px 10px; border-radius: 3px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>🌾 Farm2Future - Complete System Test</h1>
+    
+    <div class="test-section">
+        <h3>🔐 Authentication Tests</h3>
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="testSession()">Check Session</button>
+        <div id="auth-status" class="status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>📊 Dashboard Features</h3>
+        <button onclick="testActivities()">Test Activities</button>
+        <button onclick="testCrops()">Test Crops</button>
+        <button onclick="seedSampleData()">Seed Sample Data</button>
+        <div id="dashboard-status" class="status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>🌾 Government Schemes</h3>
+        <button onclick="testGovSchemes()">Test Gov Schemes API</button>
+        <button onclick="openGovPage()">Open Gov Page</button>
+        <div id="gov-status" class="status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>⭐ Reviews & Support</h3>
+        <button onclick="testReviewSubmission()">Test Review API</button>
+        <button onclick="openReviewPage()">Open Review Page</button>
+        <div id="review-status" class="status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>🧪 Soil Analysis</h3>
+        <button onclick="testSoilAnalysis()">Test Soil Analysis</button>
+        <div id="soil-status" class="status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>📝 Test Log</h3>
+        <button onclick="clearLog()">Clear Log</button>
+        <button onclick="runAllTests()">🚀 Run All Tests</button>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:10000/api' 
+            : `${window.location.protocol}//${window.location.host}/api`;
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateStatus(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.textContent = (isSuccess ? '✅ ' : '❌ ') + message;
+            element.className = 'status ' + (isSuccess ? 'success' : 'error');
+        }
+        
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+        }
+        
+        async function testLogin() {
+            log('Testing login...');
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email: 'test@example.com', password: 'test123' })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStatus('auth-status', 'Login successful', true);
+                    log('✅ Login successful');
+                } else {
+                    updateStatus('auth-status', 'Login failed: ' + data.error, false);
+                    log('❌ Login failed: ' + data.error);
+                }
+            } catch (error) {
+                updateStatus('auth-status', 'Login error: ' + error.message, false);
+                log('❌ Login error: ' + error.message);
+            }
+        }
+        
+        async function testSession() {
+            log('Testing session...');
+            try {
+                const response = await fetch(`${API_URL}/check-session`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    updateStatus('auth-status', `Session active for ${data.farmerName}`, true);
+                    log(`✅ Session active for ${data.farmerName}`);
+                } else {
+                    updateStatus('auth-status', 'No active session', false);
+                    log('❌ No active session');
+                }
+            } catch (error) {
+                updateStatus('auth-status', 'Session error: ' + error.message, false);
+                log('❌ Session error: ' + error.message);
+            }
+        }
+        
+        async function testActivities() {
+            log('Testing activities...');
+            try {
+                const response = await fetch(`${API_URL}/activities`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus('dashboard-status', `Found ${data.length} activities`, true);
+                    log(`✅ Activities loaded: ${data.length} items`);
+                } else {
+                    const data = await response.json();
+                    updateStatus('dashboard-status', 'Activities failed: ' + data.error, false);
+                    log('❌ Activities failed: ' + data.error);
+                }
+            } catch (error) {
+                updateStatus('dashboard-status', 'Activities error: ' + error.message, false);
+                log('❌ Activities error: ' + error.message);
+            }
+        }
+        
+        async function testCrops() {
+            log('Testing crops...');
+            try {
+                const response = await fetch(`${API_URL}/crops`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus('dashboard-status', `Found ${data.length} crops`, true);
+                    log(`✅ Crops loaded: ${data.length} items`);
+                } else {
+                    const data = await response.json();
+                    updateStatus('dashboard-status', 'Crops failed: ' + data.error, false);
+                    log('❌ Crops failed: ' + data.error);
+                }
+            } catch (error) {
+                updateStatus('dashboard-status', 'Crops error: ' + error.message, false);
+                log('❌ Crops error: ' + error.message);
+            }
+        }
+        
+        async function seedSampleData() {
+            log('Seeding sample data...');
+            try {
+                const response = await fetch(`${API_URL}/seed-activities`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus('dashboard-status', 'Sample data added successfully', true);
+                    log('✅ Sample data seeded successfully');
+                } else {
+                    const data = await response.json();
+                    updateStatus('dashboard-status', 'Seed failed: ' + data.error, false);
+                    log('❌ Seed failed: ' + data.error);
+                }
+            } catch (error) {
+                updateStatus('dashboard-status', 'Seed error: ' + error.message, false);
+                log('❌ Seed error: ' + error.message);
+            }
+        }
+        
+        async function testGovSchemes() {
+            log('Testing government schemes...');
+            try {
+                const response = await fetch(`${window.location.protocol}//${window.location.host}/gov.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Test Farmer',
+                        email: 'test@example.com',
+                        state: 'Maharashtra',
+                        district: 'Pune',
+                        land_size: '2 acres',
+                        crop_type: 'Wheat',
+                        irrigation: 'Drip',
+                        farmer_type: 'Marginal/Small',
+                        goal: 'Loan'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus('gov-status', `Found ${data.schemes ? data.schemes.length : 0} schemes`, true);
+                    log(`✅ Gov schemes working: ${data.schemes ? data.schemes.length : 0} schemes found`);
+                } else {
+                    updateStatus('gov-status', 'Gov schemes API failed', false);
+                    log('❌ Gov schemes API failed');
+                }
+            } catch (error) {
+                updateStatus('gov-status', 'Gov schemes error: ' + error.message, false);
+                log('❌ Gov schemes error: ' + error.message);
+            }
+        }
+        
+        function openGovPage() {
+            window.open(`${window.location.protocol}//${window.location.host}/gov.php`, '_blank');
+            log('🔗 Opened government schemes page');
+        }
+        
+        async function testReviewSubmission() {
+            log('Testing review submission...');
+            try {
+                const response = await fetch(`${API_URL}/submit-review`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Test User',
+                        email: 'test@example.com',
+                        date: '2024-01-15',
+                        review: 'This is a test review from the test page.'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus('review-status', 'Review submitted successfully', true);
+                    log('✅ Review submission working');
+                } else {
+                    const data = await response.json();
+                    updateStatus('review-status', 'Review failed: ' + data.message, false);
+                    log('❌ Review failed: ' + data.message);
+                }
+            } catch (error) {
+                updateStatus('review-status', 'Review error: ' + error.message, false);
+                log('❌ Review error: ' + error.message);
+            }
+        }
+        
+        function openReviewPage() {
+            window.open(`${window.location.protocol}//${window.location.host}/rev.php`, '_blank');
+            log('🔗 Opened review page');
+        }
+        
+        async function testSoilAnalysis() {
+            log('Testing soil analysis...');
+            try {
+                const formData = new FormData();
+                // Create a dummy file for testing
+                const dummyFile = new Blob(['dummy soil image'], { type: 'image/jpeg' });
+                formData.append('image', dummyFile, 'test-soil.jpg');
+                
+                const response = await fetch(`${API_URL}/analyze-soil`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        updateStatus('soil-status', `Soil analysis working: ${data.soilType}`, true);
+                        log(`✅ Soil analysis working: ${data.soilType}, pH: ${data.ph}`);
+                    } else {
+                        updateStatus('soil-status', 'Soil analysis failed: ' + data.message, false);
+                        log('❌ Soil analysis failed: ' + data.message);
+                    }
+                } else {
+                    updateStatus('soil-status', 'Soil analysis API not found', false);
+                    log('❌ Soil analysis API not found');
+                }
+            } catch (error) {
+                updateStatus('soil-status', 'Soil analysis error: ' + error.message, false);
+                log('❌ Soil analysis error: ' + error.message);
+            }
+        }
+        
+        async function runAllTests() {
+            log('🚀 Running all tests...');
+            clearLog();
+            log('Starting comprehensive test suite...');
+            
+            await testLogin();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testSession();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testActivities();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await seedSampleData();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testCrops();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testGovSchemes();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testReviewSubmission();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testSoilAnalysis();
+            
+            log('🎉 All tests completed!');
+        }
+        
+        // Auto-run basic tests on page load
+        window.onload = function() {
+            log('Farm2Future Complete System Test Started');
+            log(`API URL: ${API_URL}`);
+            log('Click "Run All Tests" to test everything at once');
+        };
+    </script>
+</body>
+</html>
