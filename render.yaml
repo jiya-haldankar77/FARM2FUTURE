@@ -13,8 +13,8 @@ services:
         fromDatabase:
           name: farm2future-db
           property: connectionString
-    database:
-      name: farm2future-db
-      databaseName: farm2future
-      user: farm2future_user
-      plan: free
+  - type: postgres
+    name: farm2future-db
+    databaseName: farm2future
+    user: farm2future_user
+    plan: free
