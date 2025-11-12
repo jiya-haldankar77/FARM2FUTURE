@@ -127,7 +127,7 @@ function displayAnalysisResults(result) {
           <h3>Recommended Crops</h3>
         </div>
         <div class="crop-tags">
-          ${result.crops.map(crop => `
+          ${(result.suitableCrops || result.crops || []).map(crop => `
             <div class="crop-tag">
               <i class="fas fa-leaf"></i>
               <span>${crop}</span>

@@ -332,7 +332,7 @@ function displayAnalysisResults(result) {
           <i class="fas fa-seedling"></i> Recommended Crops
         </h4>
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-          ${result.crops.map(crop => `
+          ${(result.suitableCrops || result.crops || []).map(crop => `
             <span style="background: #E8F5E9; color: #2E7D32; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.9rem;">
               ${crop}
             </span>

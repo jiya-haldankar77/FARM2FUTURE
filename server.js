@@ -396,6 +396,11 @@ app.post('/api/submit-review', async (req, res) => {
 // Soil analysis endpoint (mock results since ML service isn't running)
 app.post('/api/analyze-soil', async (req, res) => {
   try {
+    console.log('Soil analysis request received');
+    
+    // Simulate processing time
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     // Mock soil analysis results
     const mockResults = {
       success: true,
@@ -419,12 +424,18 @@ app.post('/api/analyze-soil', async (req, res) => {
     
     // Log the analysis for the user if authenticated
     if (req.session && req.session.farmerId) {
-      await db.query(
-        'INSERT INTO activity_log (farmer_id, activity_type, description) VALUES ($1, $2, $3)',
-        [req.session.farmerId, 'soil', `Soil analysis completed - Type: ${mockResults.soilType}, pH: ${mockResults.ph}`]
-      );
+      try {
+        await db.query(
+          'INSERT INTO activity_log (farmer_id, activity_type, description) VALUES ($1, $2, $3)',
+          [req.session.farmerId, 'soil', `Soil analysis completed - Type: ${mockResults.soilType}, pH: ${mockResults.ph}`]
+        );
+      } catch (dbError) {
+        console.error('Error logging soil analysis:', dbError);
+        // Continue anyway
+      }
     }
     
+    console.log('Soil analysis completed successfully');
     res.json(mockResults);
   } catch (error) {
     console.error('Soil analysis error:', error);
@@ -494,10 +505,11 @@ app.get('/api/crops', isAuthenticated, async (req, res) => {
       'SELECT * FROM crops WHERE farmer_id = $1 ORDER BY created_at DESC',
       [req.session.farmerId]
     );
-    res.json(result.rows);
+    // Always return an array, even if empty
+    res.json({ crops: result.rows || [] });
   } catch (error) {
     console.error('Error fetching crops:', error);
-    res.status(500).json({ error: 'Failed to fetch crops' });
+    res.status(500).json({ crops: [], error: 'Failed to fetch crops' });
   }
 });
 

@@ -253,7 +253,8 @@ async function loadCrops() {
       credentials: 'include'
     });
     
-    const crops = await response.json();
+    const data = await response.json();
+    const crops = data.crops || data || [];
     const cropsList = document.getElementById('cropsList');
     
     if (crops.length === 0) {
