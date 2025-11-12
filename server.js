@@ -29,15 +29,37 @@ app.use(session({
   }
 }));
 
+// Debug environment variables
+console.log('🔍 Environment Variables Debug:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('DB_PORT:', process.env.DB_PORT);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_NAME:', process.env.DB_NAME);
+console.log('DATABASE_URL:', process.env.DATABASE_URL);
+
 // PostgreSQL Database Connection
-const db = new Pool({
+const dbConfig = {
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT || 5432,
+  port: parseInt(process.env.DB_PORT) || 5432,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
+};
+
+// If DATABASE_URL is provided (Render fallback), use it
+let db;
+if (process.env.DATABASE_URL) {
+  console.log('📡 Using DATABASE_URL connection string');
+  db = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  });
+} else {
+  console.log('🔧 Using individual database config:', dbConfig);
+  db = new Pool(dbConfig);
+}
 
 // Test database connection
 db.connect((err, client, release) => {
