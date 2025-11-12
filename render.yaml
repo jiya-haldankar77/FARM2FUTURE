@@ -16,11 +16,17 @@ services:
       # PORT used in your server: process.env.PORT || 3000
       - key: PORT
         value: 10000
+      - key: SESSION_SECRET
+        value: farm2future-super-secure-session-secret-key-2024
       # Database credentials pulled from the managed DB created above
       - key: DB_HOST
         fromDatabase:
           name: farm2future-db
           property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: farm2future-db
+          property: port
       - key: DB_USER
         fromDatabase:
           name: farm2future-db
