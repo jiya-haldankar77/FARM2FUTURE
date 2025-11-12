@@ -48,13 +48,22 @@ const dbConfig = {
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 };
 
+// Fix incomplete hostname in DATABASE_URL
+let databaseUrl = process.env.DATABASE_URL;
+if (databaseUrl && databaseUrl.includes('dpg-') && !databaseUrl.includes('.render.com')) {
+  // Fix incomplete hostname
+  databaseUrl = databaseUrl.replace(/dpg-([a-zA-Z0-9]+)-a/, 'dpg-$1-a.oregon-postgres.render.com');
+  console.log('🔧 Fixed DATABASE_URL hostname');
+}
+
 // If DATABASE_URL is provided (Render fallback), use it
 let db;
-if (process.env.DATABASE_URL) {
+if (databaseUrl) {
   console.log('📡 Using DATABASE_URL connection string');
+  console.log('🔗 Connection URL:', databaseUrl.replace(/:[^:@]*@/, ':****@')); // Hide password
   db = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    connectionString: databaseUrl,
+    ssl: { rejectUnauthorized: false }
   });
 } else {
   console.log('🔧 Using individual database config:', dbConfig);
