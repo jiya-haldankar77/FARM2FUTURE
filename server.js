@@ -364,6 +364,118 @@ app.post('/gov.php', async (req, res) => {
   }
 });
 
+// ============ DASHBOARD API ENDPOINTS ============
+
+// Get activities
+app.get('/api/activities', isAuthenticated, async (req, res) => {
+  try {
+    const result = await db.query(
+      'SELECT * FROM activity_log WHERE farmer_id = $1 ORDER BY created_at DESC LIMIT 10',
+      [req.session.farmerId]
+    );
+    res.json(result.rows.map(activity => ({
+      activity_id: activity.log_id,
+      activity_type: activity.activity_type,
+      description: activity.description,
+      timestamp: activity.created_at
+    })));
+  } catch (error) {
+    console.error('Error fetching activities:', error);
+    res.status(500).json({ error: 'Failed to fetch activities' });
+  }
+});
+
+// Add activity
+app.post('/api/activities', isAuthenticated, async (req, res) => {
+  const { activity_type, description } = req.body;
+  try {
+    const result = await db.query(
+      'INSERT INTO activity_log (farmer_id, activity_type, description) VALUES ($1, $2, $3) RETURNING *',
+      [req.session.farmerId, activity_type, description]
+    );
+    res.json({ success: true, activity: result.rows[0] });
+  } catch (error) {
+    console.error('Error adding activity:', error);
+    res.status(500).json({ error: 'Failed to add activity' });
+  }
+});
+
+// Delete activity
+app.delete('/api/activities/:id', isAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query(
+      'DELETE FROM activity_log WHERE log_id = $1 AND farmer_id = $2',
+      [id, req.session.farmerId]
+    );
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting activity:', error);
+    res.status(500).json({ error: 'Failed to delete activity' });
+  }
+});
+
+// Get crops
+app.get('/api/crops', isAuthenticated, async (req, res) => {
+  try {
+    const result = await db.query(
+      'SELECT * FROM crops WHERE farmer_id = $1 ORDER BY created_at DESC',
+      [req.session.farmerId]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching crops:', error);
+    res.status(500).json({ error: 'Failed to fetch crops' });
+  }
+});
+
+// Add crop
+app.post('/api/crops', isAuthenticated, async (req, res) => {
+  const { crop_name, crop_type, sowing_date, location } = req.body;
+  try {
+    const result = await db.query(
+      'INSERT INTO crops (farmer_id, crop_name, crop_type, sowing_date, location) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [req.session.farmerId, crop_name, crop_type, sowing_date, location]
+    );
+    
+    // Log activity
+    await db.query(
+      'INSERT INTO activity_log (farmer_id, activity_type, description) VALUES ($1, $2, $3)',
+      [req.session.farmerId, 'crop_added', `New crop added: ${crop_name}`]
+    );
+    
+    res.json({ success: true, crop: result.rows[0] });
+  } catch (error) {
+    console.error('Error adding crop:', error);
+    res.status(500).json({ error: 'Failed to add crop' });
+  }
+});
+
+// Seed dummy activities
+app.post('/api/seed-activities', isAuthenticated, async (req, res) => {
+  try {
+    const dummyActivities = [
+      { type: 'irrigation', description: 'Watered tomato field - 2 hours' },
+      { type: 'crop_added', description: 'Added new wheat crop - 5 acres' },
+      { type: 'soil', description: 'Soil pH tested - Results: 6.8 (Good)' },
+      { type: 'task_completed', description: 'Fertilizer application completed' },
+      { type: 'weather', description: 'Weather alert: Rain expected tomorrow' }
+    ];
+    
+    for (const activity of dummyActivities) {
+      await db.query(
+        'INSERT INTO activity_log (farmer_id, activity_type, description) VALUES ($1, $2, $3)',
+        [req.session.farmerId, activity.type, activity.description]
+      );
+    }
+    
+    res.json({ success: true, message: 'Sample activities added' });
+  } catch (error) {
+    console.error('Error seeding activities:', error);
+    res.status(500).json({ error: 'Failed to seed activities' });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
