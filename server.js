@@ -400,32 +400,116 @@ app.post('/api/analyze-soil', async (req, res) => {
     // Simulate processing time
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Mock soil analysis results
+    // Mock soil analysis results matching your ML model format
+    const soilTypes = ['black', 'cider', 'yellow', 'laterite', 'peat'];
+    const randomSoilType = soilTypes[Math.floor(Math.random() * soilTypes.length)];
+    
+    // Soil-specific recommendations based on your classifier types
+    const soilRecommendations = {
+      black: {
+        ph: 7.2,
+        moisture: 85,
+        recommendations: [
+          'Black soil is excellent for cotton and sugarcane cultivation',
+          'Rich in calcium carbonate, iron, magnesium and potash',
+          'Good water retention capacity - monitor drainage',
+          'Add organic matter to improve soil structure'
+        ],
+        suitableCrops: ['Cotton', 'Sugarcane', 'Wheat', 'Jowar', 'Linseed'],
+        fertilizers: [
+          'Organic Compost - Enhance soil structure',
+          'Phosphorus fertilizer - Black soil is often deficient',
+          'Zinc sulfate - For micronutrient balance',
+          'Gypsum - If soil is too alkaline'
+        ]
+      },
+      cider: {
+        ph: 6.5,
+        moisture: 70,
+        recommendations: [
+          'Cider soil has good drainage properties',
+          'Suitable for fruit trees and vegetables',
+          'Monitor pH levels regularly',
+          'Add lime if soil becomes too acidic'
+        ],
+        suitableCrops: ['Apples', 'Grapes', 'Vegetables', 'Berries', 'Citrus'],
+        fertilizers: [
+          'Balanced NPK fertilizer',
+          'Organic compost for soil health',
+          'Lime - To maintain optimal pH',
+          'Potassium sulfate for fruit quality'
+        ]
+      },
+      yellow: {
+        ph: 6.0,
+        moisture: 60,
+        recommendations: [
+          'Yellow soil is generally acidic and well-drained',
+          'Good for tea, coffee and spice cultivation',
+          'Requires regular organic matter addition',
+          'Monitor iron and aluminum content'
+        ],
+        suitableCrops: ['Tea', 'Coffee', 'Spices', 'Rubber', 'Coconut'],
+        fertilizers: [
+          'Organic manure - Essential for yellow soil',
+          'Lime - To reduce acidity',
+          'NPK with micronutrients',
+          'Iron chelate if deficient'
+        ]
+      },
+      laterite: {
+        ph: 5.8,
+        moisture: 55,
+        recommendations: [
+          'Laterite soil is rich in iron and aluminum',
+          'Good drainage but low fertility',
+          'Requires heavy fertilization and organic matter',
+          'Suitable for tree crops with proper management'
+        ],
+        suitableCrops: ['Cashew', 'Coconut', 'Rubber', 'Tapioca', 'Rice'],
+        fertilizers: [
+          'Heavy organic manuring required',
+          'NPK fertilizer with micronutrients',
+          'Lime to improve pH',
+          'Green manure crops recommended'
+        ]
+      },
+      peat: {
+        ph: 4.5,
+        moisture: 90,
+        recommendations: [
+          'Peat soil is highly organic but very acidic',
+          'Excellent water retention capacity',
+          'Requires lime application to reduce acidity',
+          'Good for specific crops adapted to acidic conditions'
+        ],
+        suitableCrops: ['Cranberries', 'Blueberries', 'Rice', 'Vegetables', 'Flowers'],
+        fertilizers: [
+          'Lime - Essential to reduce acidity',
+          'Balanced fertilizer with micronutrients',
+          'Potassium fertilizer',
+          'Avoid over-fertilization due to high organic content'
+        ]
+      }
+    };
+    
+    const soilData = soilRecommendations[randomSoilType];
+    
     const mockResults = {
       success: true,
-      soilType: 'Loamy Soil',
-      ph: 6.8,
+      soil_type: randomSoilType, // Using underscore format to match your ML model
+      soilType: randomSoilType,   // Also provide camelCase for compatibility
+      ph: soilData.ph,
       nutrients: {
-        nitrogen: 'Medium',
-        phosphorus: 'High',
-        potassium: 'Medium'
+        nitrogen: Math.random() > 0.5 ? 'Medium' : 'High',
+        phosphorus: Math.random() > 0.5 ? 'Medium' : 'Low',
+        potassium: Math.random() > 0.5 ? 'High' : 'Medium'
       },
-      moisture: 76,
-      recommendations: [
-        'Your soil has optimal pH levels for most crops',
-        'Consider adding organic matter to improve soil structure',
-        'Phosphorus levels are excellent - good for root development',
-        'Monitor nitrogen levels and add compost if needed'
-      ],
-      suitableCrops: ['Tomatoes', 'Wheat', 'Corn', 'Beans', 'Carrots'],
-      fertilizers: [
-        'Organic Compost - Improves soil structure and adds nutrients',
-        'NPK 10-10-10 - Balanced fertilizer for general use',
-        'Bone Meal - Excellent source of phosphorus',
-        'Potassium Sulfate - For potassium deficiency',
-        'Lime - To adjust pH if needed'
-      ],
-      confidence: 0.92
+      moisture: soilData.moisture,
+      recommendations: soilData.recommendations,
+      suitableCrops: soilData.suitableCrops,
+      fertilizers: soilData.fertilizers,
+      confidence: Math.random() * 0.2 + 0.8 // Random confidence between 0.8-1.0
     };
     
     // Log the analysis for the user if authenticated
