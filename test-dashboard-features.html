@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Features Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; margin: 5px; }
+        #log { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>Farm2Future Dashboard Features Test</h1>
+    
+    <div class="test-section">
+        <h3>Authentication</h3>
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="testSession()">Check Session</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>Activities</h3>
+        <button onclick="testGetActivities()">Get Activities</button>
+        <button onclick="testSeedActivities()">Seed Sample Activities</button>
+        <button onclick="testAddActivity()">Add Test Activity</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>Crops</h3>
+        <button onclick="testGetCrops()">Get Crops</button>
+        <button onclick="testAddCrop()">Add Test Crop</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>Government Schemes</h3>
+        <button onclick="testGovSchemes()">Test Gov Schemes</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test Log</h3>
+        <button onclick="clearLog()">Clear Log</button>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:10000/api' 
+            : `${window.location.protocol}//${window.location.host}/api`;
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+        }
+        
+        async function testLogin() {
+            log('Testing login...');
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email: 'test@example.com', password: 'test123' })
+                });
+                const data = await response.json();
+                log(`Login result: ${JSON.stringify(data)}`);
+            } catch (error) {
+                log(`Login error: ${error.message}`);
+            }
+        }
+        
+        async function testSession() {
+            log('Testing session check...');
+            try {
+                const response = await fetch(`${API_URL}/check-session`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                log(`Session result: ${JSON.stringify(data)}`);
+            } catch (error) {
+                log(`Session error: ${error.message}`);
+            }
+        }
+        
+        async function testGetActivities() {
+            log('Testing get activities...');
+            try {
+                const response = await fetch(`${API_URL}/activities`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                log(`Activities result: ${JSON.stringify(data)}`);
+            } catch (error) {
+                log(`Activities error: ${error.message}`);
+            }
+        }
+        
+        async function testSeedActivities() {
+            log('Testing seed activities...');
+            try {
+                const response = await fetch(`${API_URL}/seed-activities`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                log(`Seed activities result: ${JSON.stringify(data)}`);
+            } catch (error) {
+                log(`Seed activities error: ${error.message}`);
+            }
+        }
+        
+        async function testAddActivity() {
+            log('Testing add activity...');
+            try {
+                const response = await fetch(`${API_URL}/activities`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ 
+                        activity_type: 'test', 
+                        description: 'Test activity from dashboard test' 
+                    })
+                });
+                const data = await response.json();
+                log(`Add activity result: ${JSON.stringify(data)}`);
+            } catch (error) {
+                log(`Add activity error: ${error.message}`);
+            }
+        }
+        
+        async function testGetCrops() {
+            log('Testing get crops...');
+            try {
+                const response = await fetch(`${API_URL}/crops`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                log(`Crops result: ${JSON.stringify(data)}`);
+            } catch (error) {
+                log(`Crops error: ${error.message}`);
+            }
+        }
+        
+        async function testAddCrop() {
+            log('Testing add crop...');
+            try {
+                const response = await fetch(`${API_URL}/crops`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ 
+                        crop_name: 'Test Tomato',
+                        crop_type: 'Vegetable',
+                        sowing_date: '2024-01-15',
+                        location: 'Test Field A'
+                    })
+                });
+                const data = await response.json();
+                log(`Add crop result: ${JSON.stringify(data)}`);
+            } catch (error) {
+                log(`Add crop error: ${error.message}`);
+            }
+        }
+        
+        async function testGovSchemes() {
+            log('Testing government schemes...');
+            try {
+                const response = await fetch(`${window.location.protocol}//${window.location.host}/gov.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Test Farmer',
+                        email: 'test@example.com',
+                        state: 'Maharashtra',
+                        district: 'Pune',
+                        land_size: '2 acres',
+                        crop_type: 'Wheat',
+                        irrigation: 'Drip',
+                        farmer_type: 'Marginal/Small',
+                        goal: 'Loan'
+                    })
+                });
+                const data = await response.json();
+                log(`Gov schemes result: Found ${data.schemes ? data.schemes.length : 0} schemes`);
+            } catch (error) {
+                log(`Gov schemes error: ${error.message}`);
+            }
+        }
+        
+        // Auto-run basic tests on page load
+        window.onload = function() {
+            log('Dashboard Features Test Started');
+            log(`API URL: ${API_URL}`);
+        };
+    </script>
+</body>
+</html>
