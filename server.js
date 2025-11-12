@@ -197,9 +197,6 @@ const createTables = async () => {
 // Initialize tables
 createTables();
 
-// Static files middleware
-app.use(express.static(path.join(__dirname)));
-
 // Authentication Middleware
 const isAuthenticated = (req, res, next) => {
   if (req.session.farmerId) {
@@ -327,11 +324,13 @@ app.get('/login.html', (req, res) => {
 
 // Government schemes route
 app.get('/gov.php', (req, res) => {
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.sendFile(path.join(__dirname, 'gov-schemes.html'));
 });
 
 // Review & Support route
 app.get('/rev.php', (req, res) => {
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.sendFile(path.join(__dirname, 'rev-page.html'));
 });
 
@@ -559,6 +558,9 @@ app.post('/api/seed-activities', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Failed to seed activities' });
   }
 });
+
+// Static files middleware (MUST be after all custom routes)
+app.use(express.static(path.join(__dirname)));
 
 // Start server
 const PORT = process.env.PORT || 10000;
