@@ -1,5 +1,7 @@
 // API Base URL
-const API_URL = 'http://localhost:3000/api';
+const API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:10000/api' 
+  : `${window.location.protocol}//${window.location.host}/api`;
 
 // Check authentication on page load
 document.addEventListener('DOMContentLoaded', async () => {

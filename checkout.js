@@ -224,7 +224,10 @@ async function saveOrderToDatabase(orderData) {
         const deliveryDateObj = new Date(localStorage.getItem('tempDeliveryDate'));
         const mysqlDate = deliveryDateObj.toISOString().split('T')[0];
         
-        const response = await fetch('http://localhost:3000/api/orders', {
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:10000/api' 
+            : `${window.location.protocol}//${window.location.host}/api`;
+        const response = await fetch(`${API_URL}/orders`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
