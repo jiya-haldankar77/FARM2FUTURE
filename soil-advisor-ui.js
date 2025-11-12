@@ -145,7 +145,7 @@ function displayAnalysisResults(result) {
           <h3>Essential Amendments</h3>
         </div>
         <ul class="fertilizer-list">
-          ${result.fertilizers.map((fert, index) => `
+          ${(result.fertilizers || []).map((fert, index) => `
             <li class="fertilizer-item">
               <div class="fertilizer-icon">
                 <i class="fas fa-vial"></i>

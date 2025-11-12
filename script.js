@@ -345,7 +345,7 @@ function displayAnalysisResults(result) {
           <i class="fas fa-flask"></i> Recommended Fertilizers
         </h4>
         <ul style="margin: 0; padding-left: 1.5rem; color: #555;">
-          ${result.fertilizers.map(fert => `<li>${fert}</li>`).join('')}
+          ${(result.fertilizers || []).map(fert => `<li>${fert}</li>`).join('')}
         </ul>
       </div>
 

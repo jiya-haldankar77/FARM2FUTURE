@@ -418,6 +418,13 @@ app.post('/api/analyze-soil', async (req, res) => {
         'Monitor nitrogen levels and add compost if needed'
       ],
       suitableCrops: ['Tomatoes', 'Wheat', 'Corn', 'Beans', 'Carrots'],
+      fertilizers: [
+        'Organic Compost - Improves soil structure and adds nutrients',
+        'NPK 10-10-10 - Balanced fertilizer for general use',
+        'Bone Meal - Excellent source of phosphorus',
+        'Potassium Sulfate - For potassium deficiency',
+        'Lime - To adjust pH if needed'
+      ],
       confidence: 0.92
     };
     
