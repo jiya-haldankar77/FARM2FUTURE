@@ -1215,7 +1215,7 @@ app.get('/api/sales/summary', (req, res) => {
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
   console.log(`📊 Dashboard: http://localhost:${PORT}/dashboard.html`);
   console.log(`🔐 Login: http://localhost:${PORT}/login.html`);
   console.log(`🌾 Govt Schemes: http://localhost:${PORT}/gov.php`);
