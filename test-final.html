@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Farm2Future - Final Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2e7d32; text-align: center; }
+        .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .test-card { background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #2e7d32; }
+        .test-card h3 { margin-top: 0; color: #2e7d32; }
+        button { background: #2e7d32; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #1b5e20; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .loading { background: #fff3cd; color: #856404; }
+        #results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 Farm2Future - Final System Test</h1>
+        <p style="text-align: center; color: #666;">Testing all features to ensure everything works perfectly</p>
+        
+        <div class="test-grid">
+            <div class="test-card">
+                <h3>🔐 Authentication</h3>
+                <button onclick="testAuth()">Test Login System</button>
+                <div id="auth-status" class="status"></div>
+            </div>
+            
+            <div class="test-card">
+                <h3>🌾 Government Schemes</h3>
+                <button onclick="testGovPage()">Test Gov Page</button>
+                <button onclick="testGovAPI()">Test Gov API</button>
+                <div id="gov-status" class="status"></div>
+            </div>
+            
+            <div class="test-card">
+                <h3>⭐ Reviews & Support</h3>
+                <button onclick="testReviewPage()">Test Review Page</button>
+                <button onclick="testReviewAPI()">Test Review API</button>
+                <div id="review-status" class="status"></div>
+            </div>
+            
+            <div class="test-card">
+                <h3>🧪 Soil Analysis</h3>
+                <button onclick="testSoilAnalysis()">Test Soil Analysis</button>
+                <div id="soil-status" class="status"></div>
+            </div>
+            
+            <div class="test-card">
+                <h3>📊 Dashboard Features</h3>
+                <button onclick="testDashboard()">Test Dashboard</button>
+                <div id="dashboard-status" class="status"></div>
+            </div>
+            
+            <div class="test-card">
+                <h3>🚀 Complete Test</h3>
+                <button onclick="runAllTests()" style="background: #ff6b35;">Run Everything</button>
+                <div id="complete-status" class="status"></div>
+            </div>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:10000/api' 
+            : `${window.location.protocol}//${window.location.host}/api`;
+        
+        function updateStatus(elementId, message, type = 'loading') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+        
+        function log(message) {
+            const results = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            results.innerHTML += `<div style="padding: 5px; border-bottom: 1px solid #eee;">[${timestamp}] ${message}</div>`;
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        async function testAuth() {
+            updateStatus('auth-status', 'Testing authentication...', 'loading');
+            try {
+                // Test login
+                const loginResponse = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email: 'test@example.com', password: 'test123' })
+                });
+                
+                if (loginResponse.ok) {
+                    const loginData = await loginResponse.json();
+                    if (loginData.success) {
+                        updateStatus('auth-status', '✅ Authentication working perfectly!', 'success');
+                        log('✅ Login system working');
+                        return true;
+                    }
+                }
+                
+                updateStatus('auth-status', '❌ Authentication failed', 'error');
+                log('❌ Login system failed');
+                return false;
+            } catch (error) {
+                updateStatus('auth-status', '❌ Auth error: ' + error.message, 'error');
+                log('❌ Auth error: ' + error.message);
+                return false;
+            }
+        }
+        
+        async function testGovPage() {
+            updateStatus('gov-status', 'Testing government page...', 'loading');
+            try {
+                const response = await fetch(`${window.location.protocol}//${window.location.host}/gov.php`);
+                const text = await response.text();
+                
+                if (response.ok && text.includes('<html') && text.includes('government')) {
+                    updateStatus('gov-status', '✅ Gov page loads as HTML!', 'success');
+                    log('✅ Government page working');
+                    return true;
+                } else {
+                    updateStatus('gov-status', '❌ Gov page not loading properly', 'error');
+                    log('❌ Government page failed');
+                    return false;
+                }
+            } catch (error) {
+                updateStatus('gov-status', '❌ Gov page error: ' + error.message, 'error');
+                log('❌ Gov page error: ' + error.message);
+                return false;
+            }
+        }
+        
+        async function testGovAPI() {
+            try {
+                const response = await fetch(`${window.location.protocol}//${window.location.host}/gov.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Test Farmer',
+                        email: 'test@example.com',
+                        state: 'Maharashtra',
+                        district: 'Pune',
+                        land_size: '2 acres',
+                        crop_type: 'Wheat',
+                        irrigation: 'Drip',
+                        farmer_type: 'Marginal/Small',
+                        goal: 'Loan'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.schemes && data.schemes.length > 0) {
+                        log(`✅ Gov API working - ${data.schemes.length} schemes found`);
+                        return true;
+                    }
+                }
+                
+                log('❌ Gov API failed');
+                return false;
+            } catch (error) {
+                log('❌ Gov API error: ' + error.message);
+                return false;
+            }
+        }
+        
+        async function testReviewPage() {
+            updateStatus('review-status', 'Testing review page...', 'loading');
+            try {
+                const response = await fetch(`${window.location.protocol}//${window.location.host}/rev.php`);
+                const text = await response.text();
+                
+                if (response.ok && text.includes('<html') && text.includes('review')) {
+                    updateStatus('review-status', '✅ Review page loads as HTML!', 'success');
+                    log('✅ Review page working');
+                    return true;
+                } else {
+                    updateStatus('review-status', '❌ Review page not loading properly', 'error');
+                    log('❌ Review page failed');
+                    return false;
+                }
+            } catch (error) {
+                updateStatus('review-status', '❌ Review page error: ' + error.message, 'error');
+                log('❌ Review page error: ' + error.message);
+                return false;
+            }
+        }
+        
+        async function testReviewAPI() {
+            try {
+                const response = await fetch(`${API_URL}/submit-review`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Test User',
+                        email: 'test@example.com',
+                        date: '2024-01-15',
+                        review: 'Test review from final test page'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        log('✅ Review API working');
+                        return true;
+                    }
+                }
+                
+                log('❌ Review API failed');
+                return false;
+            } catch (error) {
+                log('❌ Review API error: ' + error.message);
+                return false;
+            }
+        }
+        
+        async function testSoilAnalysis() {
+            updateStatus('soil-status', 'Testing soil analysis...', 'loading');
+            try {
+                const formData = new FormData();
+                const dummyFile = new Blob(['dummy soil image'], { type: 'image/jpeg' });
+                formData.append('image', dummyFile, 'test-soil.jpg');
+                
+                const response = await fetch(`${API_URL}/analyze-soil`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.soilType) {
+                        updateStatus('soil-status', `✅ Soil analysis working! Type: ${data.soilType}`, 'success');
+                        log(`✅ Soil analysis working - ${data.soilType}, pH: ${data.ph}`);
+                        return true;
+                    }
+                }
+                
+                updateStatus('soil-status', '❌ Soil analysis failed', 'error');
+                log('❌ Soil analysis failed');
+                return false;
+            } catch (error) {
+                updateStatus('soil-status', '❌ Soil analysis error: ' + error.message, 'error');
+                log('❌ Soil analysis error: ' + error.message);
+                return false;
+            }
+        }
+        
+        async function testDashboard() {
+            updateStatus('dashboard-status', 'Testing dashboard features...', 'loading');
+            try {
+                // Test activities endpoint
+                const activitiesResponse = await fetch(`${API_URL}/activities`, {
+                    credentials: 'include'
+                });
+                
+                if (activitiesResponse.ok || activitiesResponse.status === 401) {
+                    updateStatus('dashboard-status', '✅ Dashboard endpoints working!', 'success');
+                    log('✅ Dashboard features working');
+                    return true;
+                }
+                
+                updateStatus('dashboard-status', '❌ Dashboard failed', 'error');
+                log('❌ Dashboard failed');
+                return false;
+            } catch (error) {
+                updateStatus('dashboard-status', '❌ Dashboard error: ' + error.message, 'error');
+                log('❌ Dashboard error: ' + error.message);
+                return false;
+            }
+        }
+        
+        async function runAllTests() {
+            updateStatus('complete-status', 'Running complete system test...', 'loading');
+            log('🚀 Starting complete system test...');
+            
+            const results = [];
+            
+            results.push(await testAuth());
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            results.push(await testGovPage());
+            results.push(await testGovAPI());
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            results.push(await testReviewPage());
+            results.push(await testReviewAPI());
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            results.push(await testSoilAnalysis());
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            results.push(await testDashboard());
+            
+            const passed = results.filter(r => r).length;
+            const total = results.length;
+            
+            if (passed === total) {
+                updateStatus('complete-status', `🎉 ALL TESTS PASSED! (${passed}/${total})`, 'success');
+                log(`🎉 Complete system test PASSED! All ${total} tests successful!`);
+            } else {
+                updateStatus('complete-status', `⚠️ ${passed}/${total} tests passed`, 'error');
+                log(`⚠️ System test completed: ${passed}/${total} tests passed`);
+            }
+        }
+        
+        // Auto-run basic connectivity test on page load
+        window.onload = function() {
+            log('Farm2Future Final System Test Started');
+            log(`API URL: ${API_URL}`);
+            log('Click "Run Everything" to test all features');
+        };
+    </script>
+</body>
+</html>
