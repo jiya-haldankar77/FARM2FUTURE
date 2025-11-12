@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: farm2future
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_HOST
+        fromDatabase:
+          name: farm2future-db
+          property: connectionString
+    database:
+      name: farm2future-db
+      databaseName: farm2future
+      user: farm2future_user
+      plan: free

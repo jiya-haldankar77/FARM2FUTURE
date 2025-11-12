@@ -1,0 +1,795 @@
+<?php
+// Initialize variables
+$showResults = false;
+$recommendedSchemes = [];
+
+// Government Schemes Database
+$schemesDatabase = [
+    [
+        'title' => 'PM-Kisan Samman Nidhi',
+        'description' => 'Direct income support of ₹6,000/year to small and marginal farmers in three equal installments.',
+        'link' => 'https://pmkisan.gov.in/',
+        'tags' => ['Loan', 'Subsidy', 'General', 'SC/ST', 'Women', 'Marginal/Small'],
+        'icon' => '💰'
+    ],
+    [
+        'title' => 'Pradhan Mantri Fasal Bima Yojana',
+        'description' => 'Comprehensive crop insurance scheme protecting farmers against crop failure due to natural calamities.',
+        'link' => 'https://pmfby.gov.in/',
+        'tags' => ['Insurance', 'General', 'SC/ST', 'Women', 'Marginal/Small'],
+        'icon' => '🛡️'
+    ],
+    [
+        'title' => 'Kisan Credit Card (KCC)',
+        'description' => 'Provides timely access to credit for agricultural needs at subsidized interest rates up to ₹3 lakh.',
+        'link' => 'https://www.rbi.org.in/',
+        'tags' => ['Loan', 'General', 'SC/ST', 'Women', 'Marginal/Small'],
+        'icon' => '💳'
+    ],
+    [
+        'title' => 'Pradhan Mantri Krishi Sinchayee Yojana',
+        'description' => 'Subsidy for drip and sprinkler irrigation systems to improve water-use efficiency and expand irrigation.',
+        'link' => 'https://pmksy.gov.in/',
+        'tags' => ['Subsidy', 'Machinery', 'Drip', 'General', 'SC/ST', 'Women'],
+        'icon' => '💧'
+    ],
+    [
+        'title' => 'Sub-Mission on Agricultural Mechanization',
+        'description' => 'Financial assistance for purchasing agricultural machinery and equipment with 40-50% subsidy.',
+        'link' => 'https://agricoop.gov.in/',
+        'tags' => ['Machinery', 'Subsidy', 'General', 'SC/ST', 'Women', 'Marginal/Small'],
+        'icon' => '🚜'
+    ],
+    [
+        'title' => 'National Mission on Sustainable Agriculture',
+        'description' => 'Promotes sustainable farming practices, soil health management, and organic farming with training support.',
+        'link' => 'https://agricoop.gov.in/en/divisiontype/NMSA',
+        'tags' => ['Training', 'Subsidy', 'General', 'SC/ST', 'Women'],
+        'icon' => '🌱'
+    ],
+    [
+        'title' => 'Soil Health Card Scheme',
+        'description' => 'Free soil testing and customized recommendations to improve crop yield and maintain soil fertility.',
+        'link' => 'https://soilhealth.dac.gov.in/',
+        'tags' => ['Training', 'General', 'SC/ST', 'Women', 'Marginal/Small'],
+        'icon' => '🧪'
+    ],
+    [
+        'title' => 'Paramparagat Krishi Vikas Yojana',
+        'description' => 'Promotes organic farming through cluster approach with ₹50,000/hectare financial support over 3 years.',
+        'link' => 'https://pgsindia-ncof.gov.in/pkvy/',
+        'tags' => ['Subsidy', 'Training', 'General', 'SC/ST', 'Women'],
+        'icon' => '🌾'
+    ],
+    [
+        'title' => 'Rashtriya Krishi Vikas Yojana',
+        'description' => 'State-specific agricultural development projects with funding support to increase farmer income.',
+        'link' => 'https://rkvy.nic.in/',
+        'tags' => ['Subsidy', 'Loan', 'General', 'SC/ST', 'Women', 'Marginal/Small'],
+        'icon' => '📈'
+    ],
+    [
+        'title' => 'e-NAM (National Agriculture Market)',
+        'description' => 'Online trading platform connecting farmers to buyers nationwide for better price realization.',
+        'link' => 'https://enam.gov.in/web/',
+        'tags' => ['Training', 'General', 'SC/ST', 'Women', 'Marginal/Small'],
+        'icon' => '🌐'
+    ],
+    [
+        'title' => 'Gramin Bhandaran Yojana',
+        'description' => 'Financial assistance for construction of rural godowns with subsidy for safe storage of agricultural produce.',
+        'link' => 'https://nhb.gov.in/',
+        'tags' => ['Subsidy', 'Loan', 'General', 'SC/ST', 'Women'],
+        'icon' => '🏗️'
+    ],
+    [
+        'title' => 'National Beekeeping & Honey Mission',
+        'description' => 'Promotes beekeeping with training, equipment subsidy, and market linkages for additional income.',
+        'link' => 'https://nhmb.nhb.gov.in/',
+        'tags' => ['Training', 'Subsidy', 'General', 'SC/ST', 'Women', 'Marginal/Small'],
+        'icon' => '🐝'
+    ]
+];
+
+// Process form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $state = $_POST['state'] ?? '';
+    $district = $_POST['district'] ?? '';
+    $landSize = $_POST['land_size'] ?? '';
+    $cropType = $_POST['crop_type'] ?? '';
+    $irrigation = $_POST['irrigation'] ?? '';
+    $farmerType = $_POST['farmer_type'] ?? '';
+    $goal = $_POST['goal'] ?? '';
+    
+    // Filter schemes based on user input
+    foreach ($schemesDatabase as $scheme) {
+        if (in_array($goal, $scheme['tags']) || in_array($farmerType, $scheme['tags']) || in_array($irrigation, $scheme['tags'])) {
+            $recommendedSchemes[] = $scheme;
+        }
+    }
+    
+    // If no specific matches, show general schemes
+    if (empty($recommendedSchemes)) {
+        $recommendedSchemes = array_slice($schemesDatabase, 0, 6);
+    }
+    
+    $showResults = true;
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm2Future - Government Scheme Recommendations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #2d7a3e;
+            --light-green: #4caf50;
+            --accent-green: #81c784;
+            --bg-white: #ffffff;
+            --bg-light: #f8fdf9;
+            --text-dark: #1a3a1a;
+            --text-gray: #5a6c5a;
+            --shadow: rgba(45, 122, 62, 0.1);
+            --shadow-hover: rgba(45, 122, 62, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e9 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 20px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.8rem;
+            font-weight: bold;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            animation: rotate 3s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px var(--shadow);
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .form-card h2 {
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group label i {
+            color: var(--light-green);
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--light-green);
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group input:hover,
+        .form-group select:hover {
+            border-color: var(--accent-green);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            color: white;
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px var(--shadow-hover);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Results Section */
+        .results-section {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-header h2 {
+            color: var(--primary-green);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .results-header p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        .schemes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .scheme-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px var(--shadow);
+            transition: all 0.4s ease;
+            animation: fadeInScale 0.6s ease-out backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scheme-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .scheme-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px var(--shadow-hover);
+        }
+
+        .scheme-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .scheme-card h3 {
+            color: var(--primary-green);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .scheme-card p {
+            color: var(--text-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .learn-more-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light-green);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .learn-more-btn:hover {
+            background: var(--primary-green);
+            transform: translateX(5px);
+        }
+
+        /* Stagger animation for cards */
+        <?php for ($i = 1; $i <= 12; $i++): ?>
+        .scheme-card:nth-child(<?php echo $i; ?>) {
+            animation-delay: <?php echo $i * 0.1; ?>s;
+        }
+        <?php endfor; ?>
+
+        /* Footer */
+        .footer {
+            background: var(--primary-green);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .form-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .schemes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>Farm2Future</span>
+            </div>
+            <nav class="nav-links">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Home</a>
+                <a href="market.html"><i class="fas fa-store"></i> Marketplace</a>
+                <a href="gov.php" style="background: rgba(255, 255, 255, 0.2);"><i class="fas fa-landmark"></i> Govt Schemes</a>
+                <a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1><i class="fas fa-seedling"></i> Government Scheme Recommendations</h1>
+            <p>Discover personalized government schemes tailored to your farming needs. Get financial support, subsidies, insurance, and training opportunities.</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <h2><i class="fas fa-clipboard-list"></i> Tell Us About Your Farm</h2>
+            <form method="POST" action="">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="state">
+                            <i class="fas fa-map-marked-alt"></i>
+                            State
+                        </label>
+                        <select id="state" name="state" required>
+                            <option value="">-- Select State --</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="district">
+                            <i class="fas fa-map-pin"></i>
+                            District
+                        </label>
+                        <input type="text" id="district" name="district" placeholder="Enter your district" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="land_size">
+                            <i class="fas fa-ruler-combined"></i>
+                            Land Size (in acres)
+                        </label>
+                        <input type="number" id="land_size" name="land_size" placeholder="e.g., 5.5" step="0.1" min="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="crop_type">
+                            <i class="fas fa-wheat-awn"></i>
+                            Crop Type
+                        </label>
+                        <select id="crop_type" name="crop_type" required>
+                            <option value="">-- Select Crop --</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Wheat">Wheat</option>
+                            <option value="Sugarcane">Sugarcane</option>
+                            <option value="Cotton">Cotton</option>
+                            <option value="Pulses">Pulses</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Fruits">Fruits</option>
+                            <option value="Oilseeds">Oilseeds</option>
+                            <option value="Spices">Spices</option>
+                            <option value="Millets">Millets</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="irrigation">
+                            <i class="fas fa-water"></i>
+                            Irrigation Method
+                        </label>
+                        <select id="irrigation" name="irrigation" required>
+                            <option value="">-- Select Method --</option>
+                            <option value="Rain-fed">Rain-fed</option>
+                            <option value="Tube well">Tube well</option>
+                            <option value="Drip">Drip Irrigation</option>
+                            <option value="Sprinkler">Sprinkler</option>
+                            <option value="Canal">Canal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="farmer_type">
+                            <i class="fas fa-user-tie"></i>
+                            Farmer Type
+                        </label>
+                        <select id="farmer_type" name="farmer_type" required>
+                            <option value="">-- Select Type --</option>
+                            <option value="General">General</option>
+                            <option value="SC/ST">SC/ST</option>
+                            <option value="Women">Women Farmer</option>
+                            <option value="Marginal/Small">Marginal/Small Farmer</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="goal">
+                            <i class="fas fa-bullseye"></i>
+                            Goal/Need
+                        </label>
+                        <select id="goal" name="goal" required>
+                            <option value="">-- Select Goal --</option>
+                            <option value="Loan">Loan/Credit</option>
+                            <option value="Insurance">Crop Insurance</option>
+                            <option value="Subsidy">Subsidy</option>
+                            <option value="Machinery">Farm Machinery</option>
+                            <option value="Training">Training & Education</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-search"></i>
+                    Find Eligible Schemes
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <?php if ($showResults && !empty($recommendedSchemes)): ?>
+        <div class="results-section">
+            <div class="results-header">
+                <h2><i class="fas fa-award"></i> Your Recommended Schemes</h2>
+                <p>Based on your profile, here are the government schemes you're eligible for</p>
+            </div>
+
+            <div class="schemes-grid">
+                <?php foreach ($recommendedSchemes as $scheme): ?>
+                <div class="scheme-card">
+                    <span class="scheme-icon"><?php echo $scheme['icon']; ?></span>
+                    <h3><?php echo htmlspecialchars($scheme['title']); ?></h3>
+                    <p><?php echo htmlspecialchars($scheme['description']); ?></p>
+                    <a href="<?php echo htmlspecialchars($scheme['link']); ?>" target="_blank" class="learn-more-btn">
+                        Learn More <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <!-- Additional Schemes Section -->
+        <?php if (!$showResults): ?>
+        <div class="results-section">
+            <div class="results-header">
+                <h2><i class="fas fa-list-check"></i> Popular Government Schemes</h2>
+                <p>Explore these beneficial schemes available for farmers across India</p>
+            </div>
+
+            <div class="schemes-grid">
+                <?php foreach (array_slice($schemesDatabase, 0, 9) as $scheme): ?>
+                <div class="scheme-card">
+                    <span class="scheme-icon"><?php echo $scheme['icon']; ?></span>
+                    <h3><?php echo htmlspecialchars($scheme['title']); ?></h3>
+                    <p><?php echo htmlspecialchars($scheme['description']); ?></p>
+                    <a href="<?php echo htmlspecialchars($scheme['link']); ?>" target="_blank" class="learn-more-btn">
+                        Learn More <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p><i class="fas fa-leaf"></i> Farm2Future - Empowering Farmers with Technology & Government Support</p>
+        <p style="margin-top: 0.5rem; opacity: 0.9;">© 2024 Farm2Future Initiative. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Form validation with visual feedback
+        const form = document.querySelector('form');
+        const inputs = form.querySelectorAll('input, select');
+
+        inputs.forEach(input => {
+            input.addEventListener('invalid', (e) => {
+                e.preventDefault();
+                input.style.borderColor = '#f44336';
+                setTimeout(() => {
+                    input.style.borderColor = '';
+                }, 2000);
+            });
+
+            input.addEventListener('input', () => {
+                if (input.validity.valid) {
+                    input.style.borderColor = '#4caf50';
+                }
+            });
+        });
+
+        // Scroll to results after form submission
+        <?php if ($showResults): ?>
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.results-section').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 300);
+        });
+        <?php endif; ?>
+
+        // Add hover effect sound (optional - can be removed if not needed)
+        const cards = document.querySelectorAll('.scheme-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+        });
+    </script>
+</body>
+</html>

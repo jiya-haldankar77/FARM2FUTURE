@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Farm2Future</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e8f5e9 0%, #f0fdf4 100%);
+      min-height: 100vh;
+    }
+
+    .checkout-header {
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      padding: 20px 40px;
+      box-shadow: 0 4px 20px rgba(46, 125, 50, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .checkout-header h1 {
+      color: white;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .checkout-header nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .checkout-header nav a:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .checkout-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .page-title {
+      color: #2e7d32;
+      font-size: 32px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .cart-items {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      transition: all 0.3s ease;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .cart-item:hover {
+      background: #f9f9f9;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-details h3 {
+      color: #2e7d32;
+      margin-bottom: 5px;
+    }
+
+    .item-details p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .item-price {
+      font-size: 20px;
+      font-weight: 600;
+      color: #2e7d32;
+      margin: 0 20px;
+    }
+
+    .item-quantity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qty-btn {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .qty-btn:hover {
+      background: #1b5e20;
+    }
+
+    .remove-btn {
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-left: 20px;
+    }
+
+    .remove-btn:hover {
+      background: #d32f2f;
+    }
+
+    .cart-summary {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      font-size: 16px;
+    }
+
+    .summary-total {
+      border-top: 2px solid #2e7d32;
+      margin-top: 15px;
+      padding-top: 15px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #2e7d32;
+    }
+
+    .buy-now-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .buy-now-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-cart i {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    /* Payment Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .modal-header h2 {
+      color: #2e7d32;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 35px;
+      height: 35px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+    }
+
+    .modal-close:hover {
+      background: #d32f2f;
+      transform: rotate(90deg) scale(1.1);
+    }
+
+    .payment-options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .payment-option {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .payment-option:hover {
+      border-color: #2e7d32;
+      background: #f1f8f4;
+    }
+
+    .payment-option.selected {
+      border-color: #2e7d32;
+      background: #e8f5e9;
+    }
+
+    .payment-icon {
+      font-size: 32px;
+    }
+
+    .payment-details h3 {
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .payment-details p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .confirm-payment-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .confirm-payment-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+    }
+
+    .success-animation {
+      text-align: center;
+    }
+
+    .success-icon {
+      font-size: 80px;
+      color: #4caf50;
+      animation: scaleIn 0.5s ease;
+    }
+
+    @keyframes scaleIn {
+      from {
+        transform: scale(0);
+      }
+      to {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="checkout-header">
+    <h1><i class="fas fa-shopping-cart"></i> My Cart</h1>
+    <nav>
+      <a href="dashboard.html">Home</a>
+      <a href="market.html">Marketplace</a>
+      <a href="login.html">Logout</a>
+    </nav>
+  </header>
+
+  <div class="checkout-container">
+    <h2 class="page-title">My Cart</h2>
+    
+    <div class="cart-items" id="cartItems">
+      <!-- Cart items will be rendered here -->
+    </div>
+
+    <div class="cart-summary" id="cartSummary" style="display:none;">
+      <div class="summary-row">
+        <span>Subtotal:</span>
+        <span>₹<span id="subtotal">0</span></span>
+      </div>
+      <div class="summary-row">
+        <span>Delivery:</span>
+        <span>₹<span id="delivery">50</span></span>
+      </div>
+      <div class="summary-row summary-total">
+        <span>Total:</span>
+        <span>₹<span id="total">0</span></span>
+      </div>
+      <button class="buy-now-btn" onclick="openDeliveryModal()">
+        <i class="fas fa-shipping-fast"></i>
+        Proceed to Checkout
+      </button>
+    </div>
+  </div>
+
+  <!-- Delivery Date Modal -->
+  <div id="deliveryModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="modal-close" onclick="closeDeliveryModal()">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2>Delivery Details</h2>
+        <p style="color: #666;">Enter your delivery information</p>
+      </div>
+
+      <div style="margin: 20px 0;">
+        <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #2e7d32;">
+          <i class="fas fa-user"></i> Full Name:
+        </label>
+        <input type="text" id="customerName" 
+               placeholder="Enter your full name"
+               style="width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 15px; font-family: 'Poppins', sans-serif;"
+               required>
+      </div>
+
+      <div style="margin: 20px 0;">
+        <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #2e7d32;">
+          <i class="fas fa-phone"></i> Phone Number:
+        </label>
+        <input type="tel" id="customerPhone" 
+               placeholder="Enter your phone number"
+               style="width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 15px; font-family: 'Poppins', sans-serif;"
+               required>
+      </div>
+
+      <div style="margin: 20px 0;">
+        <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #2e7d32;">
+          <i class="fas fa-calendar-alt"></i> Delivery Date:
+        </label>
+        <input type="date" id="deliveryDateInput" 
+               style="width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 15px; font-family: 'Poppins', sans-serif;"
+               required>
+        <p style="color: #666; font-size: 13px; margin-top: 8px;">
+          <i class="fas fa-info-circle"></i> Delivery available 3-7 days from today
+        </p>
+      </div>
+
+      <div style="margin: 20px 0;">
+        <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #2e7d32;">
+          <i class="fas fa-map-marker-alt"></i> Delivery Address:
+        </label>
+        <textarea id="deliveryAddress" 
+                  placeholder="Enter your complete delivery address"
+                  style="width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 15px; font-family: 'Poppins', sans-serif; min-height: 100px;"
+                  required></textarea>
+      </div>
+
+      <button class="confirm-payment-btn" onclick="proceedToPayment()">
+        <i class="fas fa-arrow-right"></i> Continue to Payment
+      </button>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div id="paymentModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="modal-close" onclick="closePaymentModal()">
+          <i class="fas fa-times"></i>
+        </button>
+        <h2>Choose Payment Method</h2>
+        <p style="color: #666;">Select your preferred payment option</p>
+      </div>
+
+      <div class="payment-options">
+        <div class="payment-option" onclick="selectPayment('upi')" id="upi-option">
+          <div class="payment-icon">📱</div>
+          <div class="payment-details">
+            <h3>UPI Payment</h3>
+            <p>Pay using Google Pay, PhonePe, Paytm</p>
+          </div>
+        </div>
+
+        <div class="payment-option" onclick="selectPayment('cod')" id="cod-option">
+          <div class="payment-icon">💵</div>
+          <div class="payment-details">
+            <h3>Cash on Delivery</h3>
+            <p>Pay when you receive the order</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="confirm-payment-btn" onclick="processPayment()" id="confirmPaymentBtn" disabled style="opacity: 0.5;">
+        Confirm Payment
+      </button>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <div class="success-animation">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h2 style="color: #4caf50; margin: 20px 0;">Payment Successful!</h2>
+        <p style="color: #666; margin-bottom: 20px;">Your order has been placed successfully</p>
+        <p style="color: #666; margin-bottom: 30px;">Order ID: <strong id="orderId"></strong></p>
+        <button class="confirm-payment-btn" onclick="downloadBill()">
+          <i class="fas fa-download"></i> Download Bill (PDF)
+        </button>
+        <button class="confirm-payment-btn" onclick="window.location.href='market.html'" style="background: #666; margin-top: 10px;">
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="checkout.js"></script>
+</body>
+</html>

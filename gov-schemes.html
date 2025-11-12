@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm2Future - Government Scheme Recommendations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-green: #2d7a3e;
+            --light-green: #4caf50;
+            --accent-green: #81c784;
+            --bg-white: #ffffff;
+            --bg-light: #f8fdf9;
+            --text-dark: #1a3a1a;
+            --text-gray: #5a6c5a;
+            --shadow: rgba(45, 122, 62, 0.1);
+            --shadow-hover: rgba(45, 122, 62, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e9 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 20px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.8rem;
+            font-weight: bold;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            animation: rotate 3s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 40px var(--shadow);
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .form-card h2 {
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group label i {
+            color: var(--light-green);
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--light-green);
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group input:hover,
+        .form-group select:hover {
+            border-color: var(--accent-green);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            color: white;
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px var(--shadow-hover);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Results Section */
+        .results-section {
+            animation: fadeInUp 1s ease-out;
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-header h2 {
+            color: var(--primary-green);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .results-header p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        .schemes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .scheme-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px var(--shadow);
+            transition: all 0.4s ease;
+            animation: fadeInScale 0.6s ease-out backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scheme-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .scheme-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px var(--shadow-hover);
+        }
+
+        .scheme-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .scheme-card h3 {
+            color: var(--primary-green);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .scheme-card p {
+            color: var(--text-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .learn-more-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light-green);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .learn-more-btn:hover {
+            background: var(--primary-green);
+            transform: translateX(5px);
+        }
+
+        /* Stagger animation for cards */
+        .scheme-card:nth-child(1) { animation-delay: 0.1s; }
+        .scheme-card:nth-child(2) { animation-delay: 0.2s; }
+        .scheme-card:nth-child(3) { animation-delay: 0.3s; }
+        .scheme-card:nth-child(4) { animation-delay: 0.4s; }
+        .scheme-card:nth-child(5) { animation-delay: 0.5s; }
+        .scheme-card:nth-child(6) { animation-delay: 0.6s; }
+        .scheme-card:nth-child(7) { animation-delay: 0.7s; }
+        .scheme-card:nth-child(8) { animation-delay: 0.8s; }
+        .scheme-card:nth-child(9) { animation-delay: 0.9s; }
+        .scheme-card:nth-child(10) { animation-delay: 1.0s; }
+        .scheme-card:nth-child(11) { animation-delay: 1.1s; }
+        .scheme-card:nth-child(12) { animation-delay: 1.2s; }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-white);
+            border-radius: 20px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.4s ease-out;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-icon {
+            font-size: 2.5rem;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section h3 {
+            color: var(--primary-green);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-section h3 i {
+            color: var(--light-green);
+        }
+
+        .detail-section p, .detail-section ul {
+            color: var(--text-gray);
+            line-height: 1.8;
+        }
+
+        .detail-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .detail-section ul li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .detail-section ul li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--light-green);
+            font-weight: bold;
+        }
+
+        .contact-box {
+            background: var(--bg-light);
+            border-left: 4px solid var(--light-green);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .contact-box h4 {
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-box p {
+            color: var(--text-dark);
+            margin: 0.3rem 0;
+        }
+
+        .contact-box a {
+            color: var(--light-green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .details-btn {
+            background: var(--primary-green);
+            color: white;
+            padding: 0.7rem 1.3rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .details-btn:hover {
+            background: var(--light-green);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-green);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .form-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .schemes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>Farm2Future</span>
+            </div>
+            <nav class="nav-links">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Home</a>
+                <a href="market.html"><i class="fas fa-store"></i> Marketplace</a>
+                <a href="gov.php" style="background: rgba(255, 255, 255, 0.2);"><i class="fas fa-landmark"></i> Govt Schemes</a>
+                <a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1><i class="fas fa-seedling"></i> Government Scheme Recommendations</h1>
+            <p>Discover personalized government schemes tailored to your farming needs. Get financial support, subsidies, insurance, and training opportunities.</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <h2><i class="fas fa-clipboard-list"></i> Tell Us About Your Farm</h2>
+            <form id="schemeForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">
+                            <i class="fas fa-user"></i>
+                            Your Name
+                        </label>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i>
+                            Email Address
+                        </label>
+                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">
+                            <i class="fas fa-map-marked-alt"></i>
+                            State
+                        </label>
+                        <select id="state" name="state" required>
+                            <option value="">-- Select State --</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="district">
+                            <i class="fas fa-map-pin"></i>
+                            District
+                        </label>
+                        <input type="text" id="district" name="district" placeholder="Enter your district" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="land_size">
+                            <i class="fas fa-ruler-combined"></i>
+                            Land Size (in acres)
+                        </label>
+                        <input type="number" id="land_size" name="land_size" placeholder="e.g., 5.5" step="0.1" min="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="crop_type">
+                            <i class="fas fa-wheat-awn"></i>
+                            Crop Type
+                        </label>
+                        <select id="crop_type" name="crop_type" required>
+                            <option value="">-- Select Crop --</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Wheat">Wheat</option>
+                            <option value="Sugarcane">Sugarcane</option>
+                            <option value="Cotton">Cotton</option>
+                            <option value="Pulses">Pulses</option>
+                            <option value="Vegetables">Vegetables</option>
+                            <option value="Fruits">Fruits</option>
+                            <option value="Oilseeds">Oilseeds</option>
+                            <option value="Spices">Spices</option>
+                            <option value="Millets">Millets</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="irrigation">
+                            <i class="fas fa-water"></i>
+                            Irrigation Method
+                        </label>
+                        <select id="irrigation" name="irrigation" required>
+                            <option value="">-- Select Method --</option>
+                            <option value="Rain-fed">Rain-fed</option>
+                            <option value="Tube well">Tube well</option>
+                            <option value="Drip">Drip Irrigation</option>
+                            <option value="Sprinkler">Sprinkler</option>
+                            <option value="Canal">Canal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="farmer_type">
+                            <i class="fas fa-user-tie"></i>
+                            Farmer Type
+                        </label>
+                        <select id="farmer_type" name="farmer_type" required>
+                            <option value="">-- Select Type --</option>
+                            <option value="General">General</option>
+                            <option value="SC/ST">SC/ST</option>
+                            <option value="Women">Women Farmer</option>
+                            <option value="Marginal/Small">Marginal/Small Farmer</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="goal">
+                            <i class="fas fa-bullseye"></i>
+                            Goal/Need
+                        </label>
+                        <select id="goal" name="goal" required>
+                            <option value="">-- Select Goal --</option>
+                            <option value="Loan">Loan/Credit</option>
+                            <option value="Insurance">Crop Insurance</option>
+                            <option value="Subsidy">Subsidy</option>
+                            <option value="Machinery">Farm Machinery</option>
+                            <option value="Training">Training & Education</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-search"></i>
+                    Find Eligible Schemes
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2><i class="fas fa-award"></i> Your Recommended Schemes</h2>
+                <p>Based on your profile, here are the government schemes you're eligible for</p>
+            </div>
+
+            <div class="schemes-grid" id="schemesGrid">
+                <!-- Schemes will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="schemeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-icon" id="modalIcon"></span>
+                <h2 id="modalTitle"></h2>
+                <button class="close-modal" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p><i class="fas fa-leaf"></i> Farm2Future - Empowering Farmers with Technology & Government Support</p>
+        <p style="margin-top: 0.5rem; opacity: 0.9;">© 2024 Farm2Future Initiative. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('schemeForm');
+        const resultsSection = document.getElementById('resultsSection');
+        const schemesGrid = document.getElementById('schemesGrid');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/gov.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                displaySchemes(result.schemes);
+                
+                // Scroll to results
+                setTimeout(() => {
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 300);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to fetch schemes. Please try again.');
+            }
+        });
+
+        function displaySchemes(schemes) {
+            schemesGrid.innerHTML = '';
+            
+            schemes.forEach(scheme => {
+                const card = document.createElement('div');
+                card.className = 'scheme-card';
+                card.innerHTML = `
+                    <span class="scheme-icon">${scheme.icon}</span>
+                    <h3>${scheme.title}</h3>
+                    <p>${scheme.description}</p>
+                    <div class="button-group">
+                        <button class="details-btn" onclick='showSchemeDetails(${JSON.stringify(scheme)})'>
+                            <i class="fas fa-info-circle"></i> View Details
+                        </button>
+                        <a href="${scheme.link}" target="_blank" class="learn-more-btn">
+                            Official Site <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                `;
+                schemesGrid.appendChild(card);
+            });
+            
+            resultsSection.classList.add('show');
+        }
+
+        function showSchemeDetails(scheme) {
+            const modal = document.getElementById('schemeModal');
+            const modalIcon = document.getElementById('modalIcon');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalIcon.textContent = scheme.icon;
+            modalTitle.textContent = scheme.title;
+            
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <h3><i class="fas fa-file-alt"></i> Description</h3>
+                    <p>${scheme.details || scheme.description}</p>
+                </div>
+                
+                <div class="detail-section">
+                    <h3><i class="fas fa-file-invoice"></i> Required Documents</h3>
+                    <ul>
+                        ${scheme.documents ? scheme.documents.map(doc => `<li>${doc}</li>`).join('') : '<li>Contact local agriculture office for document requirements</li>'}
+                    </ul>
+                </div>
+                
+                <div class="detail-section">
+                    <h3><i class="fas fa-gift"></i> Key Benefits</h3>
+                    <ul>
+                        ${scheme.benefits ? scheme.benefits.map(benefit => `<li>${benefit}</li>`).join('') : '<li>Multiple benefits available - check official website</li>'}
+                    </ul>
+                </div>
+                
+                <div class="detail-section">
+                    <h3><i class="fas fa-clipboard-check"></i> How to Apply</h3>
+                    <p>${scheme.howToApply || 'Visit the official website or contact your local agriculture department for application process.'}</p>
+                </div>
+                
+                <div class="contact-box">
+                    <h4><i class="fas fa-phone-alt"></i> Need Help?</h4>
+                    <p>Contact Farm2Future for personalized assistance:</p>
+                    <p><i class="fas fa-envelope"></i> Email: <a href="mailto:farm2future@gmail.com">farm2future@gmail.com</a></p>
+                    <p><i class="fas fa-phone"></i> Phone: <a href="tel:+917620571854">76-20571854</a></p>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('schemeModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('schemeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Form validation with visual feedback
+        const inputs = form.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('invalid', (e) => {
+                e.preventDefault();
+                input.style.borderColor = '#f44336';
+                setTimeout(() => {
+                    input.style.borderColor = '';
+                }, 2000);
+            });
+
+            input.addEventListener('input', () => {
+                if (input.validity.valid) {
+                    input.style.borderColor = '#4caf50';
+                }
+            });
+        });
+    </script>
+    
+    <!-- Voice Guide Feature for Government Schemes -->
+    <script src="voice-guide-schemes.js"></script>
+</body>
+</html>

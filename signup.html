@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm2Future - Sign Up</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+  <div class="login-bg">
+    <video autoplay muted loop id="bg-video">
+      <source src="video.mp4" type="video/mp4">
+      Your browser does not support HTML5 video.
+    </video>
+    <div class="overlay"></div>
+  </div>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo-container">
+        <div class="logo">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <h1>Farm2Future</h1>
+        <p class="tagline">Create your farmer account</p>
+      </div>
+      
+      <form class="login-form" onsubmit="signup(); return false;">
+        <div class="form-group">
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input type="text" id="name" placeholder="Full Name" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" placeholder="Email" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="Password" required minlength="6">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required minlength="6">
+          </div>
+        </div>
+        
+        <button type="submit" class="login-btn">
+          <span>Create Account</span>
+          <i class="fas fa-user-plus"></i>
+        </button>
+      </form>
+      
+      <div class="signup-link">
+        Already have an account? <a href="login.html">Sign in</a>
+      </div>
+      
+      <div id="message" class="logout-message"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+
+    async function signup() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        showMessage('Passwords do not match!', 'error');
+        return;
+      }
+
+      if (password.length < 6) {
+        showMessage('Password must be at least 6 characters', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_URL}/signup`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ name, email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+          showMessage('Account created successfully! Redirecting to login...', 'success');
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 2000);
+        } else {
+          showMessage(data.error || 'Sign up failed. Please try again.', 'error');
+        }
+      } catch (error) {
+        console.error('Signup error:', error);
+        showMessage('Connection error. Please make sure the server is running.', 'error');
+      }
+    }
+
+    function showMessage(message, type) {
+      const msgDiv = document.getElementById('message');
+      msgDiv.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> 
+        ${message}
+      `;
+      msgDiv.style.display = 'block';
+      msgDiv.style.background = type === 'success' ? '#e8f5e9' : '#ffebee';
+      msgDiv.style.color = type === 'success' ? '#2e7d32' : '#c62828';
+      msgDiv.style.padding = '12px';
+      msgDiv.style.borderRadius = '8px';
+      msgDiv.style.marginTop = '15px';
+    }
+  </script>
+</body>
+</html>

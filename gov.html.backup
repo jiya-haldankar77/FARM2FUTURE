@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Schemes - Farm2Future</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Farm2Future - Government Schemes</h1>
+    <nav>
+      <a href="dashboard.html">Home</a>
+      <a href="market.html">Marketplace</a>
+      <a href="gov.html" class="active">Govt Schemes</a>
+      <a href="index.html">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Find Government Schemes Tailored for You 🌾</h2>
+
+    <!-- Farmer Profile Form -->
+    <form id="farmer-profile">
+      <label for="state">State:</label>
+      <select id="state" required>
+        <option value="">--Select--</option>
+        <option value="Maharashtra">Maharashtra</option>
+        <option value="Goa">Goa</option>
+        <option value="Karnataka">Karnataka</option>
+      </select>
+
+      <label for="district">District:</label>
+      <input type="text" id="district" required>
+
+      <label for="land-size">Land Size (in acres):</label>
+      <input type="number" id="land-size" min="0.1" step="0.1" required>
+
+      <label for="crop">Crop Type:</label>
+      <select id="crop">
+        <option>Rice</option>
+        <option>Sugarcane</option>
+        <option>Vegetables</option>
+        <option>Wheat</option>
+      </select>
+
+      <label for="irrigation">Irrigation Method:</label>
+      <select id="irrigation">
+        <option>Rain-fed</option>
+        <option>Tube well</option>
+        <option>Drip</option>
+      </select>
+
+      <label for="farmer-type">Farmer Type:</label>
+      <select id="farmer-type">
+        <option>General</option>
+        <option>SC/ST</option>
+        <option>Women</option>
+        <option>Marginal/Small</option>
+      </select>
+
+      <label for="goal">Need/Goal:</label>
+      <select id="goal">
+        <option>Loan</option>
+        <option>Subsidy</option>
+        <option>Insurance</option>
+        <option>Machinery</option>
+        <option>Training</option>
+      </select>
+
+      <button type="submit">Find Eligible Schemes</button>
+    </form>
+
+    <!-- Results Section -->
+    <section id="matched-schemes">
+      <h3>Eligible Schemes for You</h3>
+      <div id="scheme-results" class="scheme-container"></div>
+    </section>
+
+    <!-- More Schemes Section -->
+    <section id="more-schemes">
+      <h2>More Government Schemes 📋</h2>
+      <div class="scheme-container">
+        
+        <div class="scheme-card">
+          <h3>PM-Kisan Samman Nidhi</h3>
+          <p>Financial support of ₹6,000/year to small and marginal farmers in three installments.</p>
+          <a href="https://pmkisan.gov.in/" target="_blank">Learn More</a>
+        </div>
+
+        <div class="scheme-card">
+          <h3>Soil Health Card Scheme</h3>
+          <p>Provides soil testing and recommendations to improve crop yield and maintain soil fertility.</p>
+          <a href="https://soilhealth.dac.gov.in/" target="_blank">Learn More</a>
+        </div>
+
+        <div class="scheme-card">
+          <h3>Pradhan Mantri Fasal Bima Yojana</h3>
+          <p>Crop insurance scheme to protect farmers against crop failure due to natural calamities.</p>
+          <a href="https://pmfby.gov.in/" target="_blank">Learn More</a>
+        </div>
+
+        <div class="scheme-card">
+          <h3>Kisan Credit Card (KCC)</h3>
+          <p>Provides farmers with timely access to credit for agricultural needs at low interest rates.</p>
+          <a href="https://www.rbi.org.in/" target="_blank">Learn More</a>
+        </div>
+
+        <div class="scheme-card">
+          <h3>Rashtriya Krishi Vikas Yojana</h3>
+          <p>Supports agricultural development projects and helps increase farmer income.</p>
+          <a href="https://rkvy.nic.in/" target="_blank">Learn More</a>
+        </div>
+
+        <div class="scheme-card">
+          <h3>Paramparagat Krishi Vikas Yojana (PKVY)</h3>
+          <p>Promotes organic farming through cluster-based approach and financial support.</p>
+          <a href="https://pgsindia-ncof.gov.in/pkvy/index.aspx" target="_blank">Learn More</a>
+        </div>
+
+        <div class="scheme-card">
+          <h3>National Mission on Sustainable Agriculture (NMSA)</h3>
+          <p>Encourages sustainable farming practices such as water-use efficiency, soil health management, and organic farming.</p>
+          <a href="https://agricoop.gov.in/en/divisiontype/NMSA" target="_blank">Learn More</a>
+        </div>
+
+        <div class="scheme-card">
+          <h3>Pradhan Mantri Krishi Sinchayee Yojana (PMKSY)</h3>
+          <p>Aims to expand cultivable area under irrigation and improve water-use efficiency.</p>
+          <a href="https://pmksy.gov.in/" target="_blank">Learn More</a>
+        </div>
+
+        <div class="scheme-card">
+          <h3>e-NAM (National Agriculture Market)</h3>
+          <p>Online trading platform for agricultural commodities to help farmers get better prices.</p>
+          <a href="https://enam.gov.in/web/" target="_blank">Learn More</a>
+        </div>
+
+        <div class="scheme-card">
+          <h3>Gramin Bhandaran Yojana</h3>
+          <p>Provides financial assistance for construction/expansion of rural godowns for safe storage of produce.</p>
+          <a href="https://nhb.gov.in/" target="_blank">Learn More</a>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="gov.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Validation Accuracy: 0.7619
+Top-2 Accuracy: 0.8095
+
+               precision    recall  f1-score   support
+
+   Black Soil       0.83      1.00      0.91         5
+  Cinder Soil       1.00      0.75      0.86         4
+Laterite Soil       1.00      0.50      0.67         4
+    Peat Soil       0.50      0.50      0.50         4
+  Yellow Soil       0.67      1.00      0.80         4
+
+     accuracy                           0.76        21
+    macro avg       0.80      0.75      0.75        21
+ weighted avg       0.80      0.76      0.75        21

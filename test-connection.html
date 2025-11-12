@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connection Test - Farm2Future</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+    
+    h1 {
+      color: #2e7d32;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+    
+    .test-section {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f5f5f5;
+      border-radius: 12px;
+      border-left: 4px solid #ddd;
+    }
+    
+    .test-section.success {
+      background: #e8f5e9;
+      border-left-color: #4caf50;
+    }
+    
+    .test-section.error {
+      background: #ffebee;
+      border-left-color: #f44336;
+    }
+    
+    .test-section.pending {
+      background: #fff3e0;
+      border-left-color: #ff9800;
+    }
+    
+    .test-title {
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .status-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    
+    .success .status-icon {
+      background: #4caf50;
+      color: white;
+    }
+    
+    .error .status-icon {
+      background: #f44336;
+      color: white;
+    }
+    
+    .pending .status-icon {
+      background: #ff9800;
+      color: white;
+    }
+    
+    .test-result {
+      font-size: 14px;
+      color: #666;
+      margin-top: 8px;
+    }
+    
+    button {
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+    }
+    
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .links {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+    
+    .links a {
+      display: inline-block;
+      margin: 5px 10px 5px 0;
+      color: #2e7d32;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌱 Farm2Future Connection Test</h1>
+    <p class="subtitle">Testing server and database connectivity</p>
+    
+    <div id="serverTest" class="test-section pending">
+      <div class="test-title">
+        <div class="status-icon">⏳</div>
+        <span>Server Connection</span>
+      </div>
+      <div class="test-result">Checking if server is running...</div>
+    </div>
+    
+    <div id="dbTest" class="test-section pending">
+      <div class="test-title">
+        <div class="status-icon">⏳</div>
+        <span>Database Connection</span>
+      </div>
+      <div class="test-result">Waiting for server test...</div>
+    </div>
+    
+    <div id="authTest" class="test-section pending">
+      <div class="test-title">
+        <div class="status-icon">⏳</div>
+        <span>Authentication System</span>
+      </div>
+      <div class="test-result">Waiting for database test...</div>
+    </div>
+    
+    <button id="testBtn" onclick="runTests()">
+      <span id="btnText">Run Tests</span>
+    </button>
+    
+    <div class="links">
+      <strong>Quick Links:</strong><br>
+      <a href="login.html">→ Go to Login</a>
+      <a href="dashboard.html">→ Go to Dashboard</a>
+      <a href="README.txt" target="_blank">→ Read Documentation</a>
+    </div>
+  </div>
+  
+  <script>
+    const API_URL = 'http://localhost:3000/api';
+    
+    async function runTests() {
+      const btn = document.getElementById('testBtn');
+      const btnText = document.getElementById('btnText');
+      
+      btn.disabled = true;
+      btnText.innerHTML = '<span class="spinner"></span> Testing...';
+      
+      // Test 1: Server Connection
+      await testServer();
+      await sleep(500);
+      
+      // Test 2: Database Connection
+      await testDatabase();
+      await sleep(500);
+      
+      // Test 3: Authentication
+      await testAuth();
+      
+      btn.disabled = false;
+      btnText.textContent = 'Run Tests Again';
+    }
+    
+    async function testServer() {
+      const section = document.getElementById('serverTest');
+      const result = section.querySelector('.test-result');
+      
+      try {
+        const response = await fetch(`${API_URL}/check-session`, {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          section.className = 'test-section success';
+          section.querySelector('.status-icon').textContent = '✓';
+          result.textContent = '✅ Server is running on http://localhost:5000';
+        } else {
+          throw new Error('Server responded with error');
+        }
+      } catch (error) {
+        section.className = 'test-section error';
+        section.querySelector('.status-icon').textContent = '✗';
+        result.innerHTML = '❌ Cannot connect to server<br>Make sure to run: <strong>npm start</strong>';
+      }
+    }
+    
+    async function testDatabase() {
+      const section = document.getElementById('dbTest');
+      const result = section.querySelector('.test-result');
+      
+      try {
+        const response = await fetch(`${API_URL}/check-session`, {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          section.className = 'test-section success';
+          section.querySelector('.status-icon').textContent = '✓';
+          result.textContent = '✅ Database connection successful';
+        } else {
+          throw new Error('Database error');
+        }
+      } catch (error) {
+        section.className = 'test-section error';
+        section.querySelector('.status-icon').textContent = '✗';
+        result.innerHTML = '❌ Database connection failed<br>Check MySQL is running and credentials in server.js';
+      }
+    }
+    
+    async function testAuth() {
+      const section = document.getElementById('authTest');
+      const result = section.querySelector('.test-result');
+      
+      try {
+        const response = await fetch(`${API_URL}/check-session`, {
+          credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          section.className = 'test-section success';
+          section.querySelector('.status-icon').textContent = '✓';
+          
+          if (data.authenticated) {
+            result.innerHTML = `✅ Authenticated as: <strong>${data.farmerName}</strong><br>You can go to dashboard now!`;
+          } else {
+            result.textContent = '✅ Authentication system working (not logged in)';
+          }
+        } else {
+          throw new Error('Auth error');
+        }
+      } catch (error) {
+        section.className = 'test-section error';
+        section.querySelector('.status-icon').textContent = '✗';
+        result.textContent = '❌ Authentication system error';
+      }
+    }
+    
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    // Auto-run tests on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(runTests, 500);
+    });
+  </script>
+</body>
+</html>

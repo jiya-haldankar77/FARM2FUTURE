@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm2Future - Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .welcome-banner {
+      animation: slideInLeft 0.8s ease-out;
+    }
+    
+    .stat-card {
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      animation: slideInLeft 0.3s ease;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    
+    .modal-header h2 {
+      color: #2d5016;
+      font-size: 24px;
+      margin: 0;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #666;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.3s;
+    }
+    
+    .close-btn:hover {
+      color: #2d5016;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #4a7c2c;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #4a7c2c 0%, #2d5016 100%);
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+      width: 100%;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+    
+    .task-item {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .task-item.completed {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+    
+    .task-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .btn-small {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+    
+    .btn-complete {
+      background: #4caf50;
+      color: white;
+    }
+    
+    .btn-delete {
+      background: #f44336;
+      color: white;
+    }
+    
+    .btn-small:hover {
+      transform: scale(1.05);
+    }
+    
+    .chart-container {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+    
+    .chatbot-container {
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .chat-message {
+      margin-bottom: 15px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      max-width: 80%;
+    }
+    
+    .chat-message.user {
+      background: #4a7c2c;
+      color: white;
+      margin-left: auto;
+    }
+    
+    .chat-message.bot {
+      background: white;
+      color: #333;
+    }
+    
+    .chat-input-container {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .chat-input {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+    }
+    
+    .btn-send {
+      padding: 12px 24px;
+      background: #4a7c2c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 15px;
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.3s;
+    }
+
+    .activity-item:hover {
+      background: #f8f9fa;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      font-size: 18px;
+    }
+
+    .activity-icon.irrigation { background: #e3f2fd; color: #1976d2; }
+    .activity-icon.crop { background: #e8f5e9; color: #2e7d32; }
+    .activity-icon.rain { background: #f3e5f5; color: #8e24aa; }
+    .activity-icon.soil { background: #fff3e0; color: #ef6c00; }
+    .activity-icon.task { background: #e0f2f1; color: #00796b; }
+
+    .activity-details {
+      flex: 1;
+    }
+
+    .activity-details p {
+      margin: 0 0 5px 0;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .activity-details .time {
+      color: #999;
+      font-size: 12px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 15px;
+      opacity: 0.3;
+    }
+
+    .delete-activity-btn {
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      opacity: 0;
+      margin-left: auto;
+    }
+
+    .activity-item:hover .delete-activity-btn {
+      opacity: 1;
+    }
+
+    .delete-activity-btn:hover {
+      background: #d32f2f;
+      transform: scale(1.1);
+    }
+
+    .activity-item {
+      position: relative;
+    }
+
+    .crops-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .crop-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+      border-left: 4px solid #4caf50;
+    }
+
+    .crop-item:hover {
+      background: #f0f0f0;
+      transform: translateX(5px);
+    }
+
+    .crop-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #4caf50, #66bb6a);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+
+    .crop-icon i {
+      color: white;
+      font-size: 24px;
+    }
+
+    .crop-details {
+      flex: 1;
+    }
+
+    .crop-details h4 {
+      margin: 0 0 5px 0;
+      color: #2e7d32;
+      font-size: 16px;
+    }
+
+    .crop-details p {
+      margin: 3px 0;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .delete-btn {
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-left: 10px;
+    }
+
+    .delete-btn:hover {
+      background: #d32f2f;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body class="dashboard-bg">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo-container">
+      <div class="logo">
+        <i class="fas fa-leaf"></i>
+      </div>
+      <h1>Farm2Future</h1>
+    </div>
+    
+    <nav class="main-nav">
+      <a href="#" class="nav-item active">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="weather.html" class="nav-item">
+        <i class="fas fa-cloud-sun"></i>
+        <span>Weather Tracker</span>
+      </a>
+      <a href="index.html" class="nav-item">
+        <i class="fas fa-seedling"></i>
+        <span>Soil Health</span>
+      </a>
+      <a href="market.html" class="nav-item">
+        <i class="fas fa-store"></i>
+        <span>Marketplace</span>
+      </a>
+      <a href="chatbot.html" class="nav-item">
+        <i class="fas fa-robot"></i>
+        <span>AI Assistant</span>
+      </a>
+      <a href="water.html" class="nav-item">
+        <i class="fas fa-tint"></i>
+        <span>Water Tracker</span>
+      </a>
+      <a href="gov.php" class="nav-item">
+        <i class="fas fa-file-invoice-dollar"></i>
+        <span>Govt Schemes</span>
+      </a>
+      <a href="nursery.html" class="nav-item">
+        <i class="fas fa-seedling"></i>
+        <span>Nursery</span>
+      </a>
+      <a href="rev.php" class="nav-item">
+        <i class="fas fa-star"></i>
+        <span>Review & Support</span>
+      </a>
+      <a href="team.html" class="nav-item">
+        <i class="fas fa-users"></i>
+        <span>Team</span>
+      </a>
+      <a href="admin.html" class="nav-item" style="background: linear-gradient(135deg, #9C27B0, #7B1FA2); color: white; box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);">
+        <i class="fas fa-user-shield"></i>
+        <span>Admin</span>
+      </a>
+    </nav>
+    
+    <div class="user-profile">
+      <div class="avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="user-info">
+        <span class="user-name" id="farmerName">Farmer</span>
+        <a href="#" class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header class="top-bar">
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search...">
+      </div>
+      <div class="header-actions">
+        <button class="notification-btn">
+          <i class="far fa-bell"></i>
+          <span class="badge">3</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard-content">
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h1>Welcome back, <span id="welcomeName">Farmer</span>!</h1>
+          <p>Here's what's happening with your farm today.</p>
+        </div>
+        <div class="weather-widget">
+          <i class="fas fa-sun"></i>
+          <div class="weather-info">
+            <span class="temp">28°C</span>
+            <span class="location">Your Location</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-stats">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #e3f2fd;">
+            <i class="fas fa-tint" style="color: #1976d2;"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="soilMoisture">78%</span>
+            <span class="stat-label">Soil Moisture</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #e8f5e9;">
+            <i class="fas fa-thermometer-half" style="color: #2e7d32;"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="temperature">26°C</span>
+            <span class="stat-label">Temperature</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #fff3e0;">
+            <i class="fas fa-wind" style="color: #ef6c00;"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">12 km/h</span>
+            <span class="stat-label">Wind Speed</span>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #f3e5f5;">
+            <i class="fas fa-cloud-rain" style="color: #8e24aa;"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">30%</span>
+            <span class="stat-label">Rain Chance</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card main-card weather-card">
+          <div class="card-header">
+            <h3>Weather Forecast</h3>
+            <a href="weather.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+          </div>
+          <div class="card-content">
+            <div class="weather-forecast">
+              <!-- Weather forecast items will be dynamically added here -->
+            </div>
+          </div>
+        </div>
+        
+        <div class="card main-card soil-health">
+          <div class="card-header">
+            <h3>Soil Health</h3>
+            <a href="index.html" class="view-all">View Details <i class="fas fa-arrow-right"></i></a>
+          </div>
+          <div class="card-content">
+            <div class="soil-moisture">
+              <div class="moisture-level">
+                <div class="moisture-fill" style="width: 78%;"></div>
+              </div>
+              <div class="moisture-info">
+                <span>78% Moisture</span>
+                <span class="status good">Optimal</span>
+              </div>
+            </div>
+            <div class="soil-stats">
+              <div class="stat">
+                <span class="value">6.8</span>
+                <span class="label">pH Level</span>
+              </div>
+              <div class="stat">
+                <span class="value">24°C</span>
+                <span class="label">Soil Temp</span>
+              </div>
+              <div class="stat">
+                <span class="value">Good</span>
+                <span class="label">Nutrients</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card main-card quick-actions">
+          <div class="card-header">
+            <h3>Quick Actions</h3>
+          </div>
+          <div class="card-content">
+            <button class="action-btn" onclick="openAddCropModal()">
+              <i class="fas fa-plus"></i>
+              <span>Add New Crop</span>
+            </button>
+            <button class="action-btn" onclick="viewCrops()">
+              <i class="fas fa-seedling"></i>
+              <span>View My Crops</span>
+            </button>
+            <button class="action-btn" onclick="openViewTasksModal()">
+              <i class="fas fa-tasks"></i>
+              <span>View Tasks</span>
+            </button>
+            <button class="action-btn" onclick="openAnalyticsModal()">
+              <i class="fas fa-chart-line"></i>
+              <span>Analytics</span>
+            </button>
+            <button class="action-btn" onclick="openHelpModal()">
+              <i class="fas fa-question-circle"></i>
+              <span>Get Help</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="card main-card recent-activity">
+          <div class="card-header">
+            <h3>Recent Activity</h3>
+            <a href="#" class="view-all" onclick="refreshActivities(); return false;">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </a>
+          </div>
+          <div class="card-content">
+            <div class="activity-list" id="activityList">
+              <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading activities...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Crops Modal -->
+  <div id="viewCropsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-seedling"></i> My Crops</h2>
+        <button class="close-btn" onclick="closeModal('viewCropsModal')">&times;</button>
+      </div>
+      <div id="cropsList" class="crops-list">
+        <div class="loading">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading crops...</p>
+        </div>
+      </div>
+      <button onclick="openAddCropModal(); closeModal('viewCropsModal');" class="btn-primary" style="margin-top: 20px;">
+        <i class="fas fa-plus"></i> Add New Crop
+      </button>
+    </div>
+  </div>
+
+  <!-- Add Crop Modal -->
+  <div id="addCropModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-plus-circle"></i> Add New Crop</h2>
+        <button class="close-btn" onclick="closeModal('addCropModal')">&times;</button>
+      </div>
+      <form id="addCropForm" onsubmit="addCrop(event)">
+        <div class="form-group">
+          <label for="cropType">Select Crop *</label>
+          <select id="cropType" required>
+            <option value="">Choose a crop</option>
+            <option value="Wheat">🌾 Wheat</option>
+            <option value="Rice">🌾 Rice</option>
+            <option value="Tomato">🍅 Tomato</option>
+            <option value="Corn">🌽 Corn (Maize)</option>
+            <option value="Potato">🥔 Potato</option>
+          </select>
+          <small style="color: #666; margin-top: 5px; display: block;">Select a crop to get detailed farming tips PDF</small>
+        </div>
+        <div class="form-group">
+          <label for="sowingDate">Sowing Date</label>
+          <input type="date" id="sowingDate">
+        </div>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" placeholder="e.g., Field A, Greenhouse 1">
+        </div>
+        <button type="submit" class="btn-primary">
+          <i class="fas fa-save"></i> Add Crop
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Tasks Modal -->
+  <div id="viewTasksModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-tasks"></i> My Tasks</h2>
+        <button class="close-btn" onclick="closeModal('viewTasksModal')">&times;</button>
+      </div>
+      <div id="tasksList">
+        <div class="loading">
+          <i class="fas fa-spinner fa-spin"></i> Loading tasks...
+        </div>
+      </div>
+      <div style="margin-top: 20px;">
+        <h3>Add New Task</h3>
+        <form id="addTaskForm" onsubmit="addTask(event)">
+          <div class="form-group">
+            <label for="taskName">Task Name *</label>
+            <input type="text" id="taskName" required placeholder="e.g., Water the field">
+          </div>
+          <div class="form-group">
+            <label for="dueDate">Due Date</label>
+            <input type="date" id="dueDate">
+          </div>
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-plus"></i> Add Task
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Modal -->
+  <div id="analyticsModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-header">
+        <h2><i class="fas fa-chart-line"></i> Analytics Dashboard</h2>
+        <button class="close-btn" onclick="closeModal('analyticsModal')">&times;</button>
+      </div>
+      <div class="chart-container">
+        <h3>Soil Moisture Levels (Last 7 Days)</h3>
+        <canvas id="soilMoistureChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <h3>Temperature Trends</h3>
+        <canvas id="temperatureChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <h3>Rainfall Data</h3>
+        <canvas id="rainfallChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help/Chatbot Modal -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-question-circle"></i> Farm Assistant</h2>
+        <button class="close-btn" onclick="closeModal('helpModal')">&times;</button>
+      </div>
+      <div class="chatbot-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message bot">
+            <p>👋 Hello! I'm your Farm Assistant. Ask me anything about:</p>
+            <ul>
+              <li>🌱 Crop management</li>
+              <li>💧 Irrigation tips</li>
+              <li>🌾 Fertilizer recommendations</li>
+              <li>🐛 Pest control</li>
+              <li>🌤️ Weather advice</li>
+            </ul>
+          </div>
+        </div>
+        <div class="chat-input-container">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+          <button class="btn-send" onclick="sendChatMessage()">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+  
+  <!-- Voice Guide Feature for Dashboard -->
+  <script src="voice-guide-dashboard.js"></script>
+</body>
+</html>

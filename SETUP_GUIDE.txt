@@ -1,0 +1,165 @@
+========================================
+FARM2FUTURE DASHBOARD - SETUP GUIDE
+========================================
+
+📋 PREREQUISITES:
+-----------------
+1. Node.js (v14 or higher)
+2. MySQL Server (v5.7 or higher)
+3. MySQL Workbench (optional, for database management)
+
+🔧 INSTALLATION STEPS:
+----------------------
+
+STEP 1: Database Setup
+----------------------
+1. Open MySQL Workbench or MySQL command line
+2. Run the SQL script from task.sql to create database and tables
+3. Insert test farmer data:
+
+   INSERT INTO farmer (name, email, password) 
+   VALUES ('John Farmer', 'farmer@test.com', 'password123');
+
+4. Verify database connection settings in server.js (lines 31-36):
+   - host: 'localhost'
+   - user: 'root'
+   - password: '' (change to your MySQL password)
+   - database: 'farm_dashboard'
+
+STEP 2: Install Dependencies
+-----------------------------
+1. Open terminal in project folder
+2. Run: npm install
+
+   This will install:
+   - express
+   - mysql2
+   - cors
+   - express-session
+   - bcrypt
+
+STEP 3: Start the Server
+-------------------------
+1. In terminal, run: npm start
+2. You should see:
+   ✅ Connected to MySQL database
+   ✅ Server running on http://localhost:5000
+   📊 Dashboard: http://localhost:5000/dashboard.html
+
+STEP 4: Login
+-------------
+1. Open browser and go to: http://localhost:5000/login.html
+2. Login credentials:
+   Email: farmer@test.com
+   Password: password123
+
+3. You will be redirected to the dashboard
+
+🎯 FEATURES:
+-----------
+
+1. ➕ ADD NEW CROP
+   - Click "Add New Crop" button
+   - Fill in crop details
+   - Automatically logs activity
+
+2. 📋 VIEW TASKS
+   - Click "View Tasks" button
+   - See all your farming tasks
+   - Add new tasks
+   - Mark tasks as complete
+
+3. 📊 ANALYTICS
+   - Click "Analytics" button
+   - View soil moisture charts
+   - Temperature trends
+   - Rainfall data
+
+4. ❓ GET HELP
+   - Click "Get Help" button
+   - Chat with AI assistant
+   - Ask about irrigation, fertilizers, pests, etc.
+
+5. 🔄 RECENT ACTIVITY
+   - Automatically shows recent activities
+   - Updates every 30 seconds
+   - Click "Refresh" to update manually
+   - Click "Add Sample Data" if no activities
+
+🔐 API ENDPOINTS:
+----------------
+
+Authentication:
+- POST /api/login
+- POST /api/logout
+- GET /api/check-session
+
+Crops:
+- GET /api/crops
+- POST /api/crops
+
+Tasks:
+- GET /api/tasks
+- POST /api/tasks
+- PUT /api/tasks/:id
+
+Analytics:
+- GET /api/analytics
+- POST /api/analytics
+
+Activities:
+- GET /api/activities
+- POST /api/activities
+- POST /api/seed-activities (for testing)
+
+🐛 TROUBLESHOOTING:
+------------------
+
+Problem: "Database connection failed"
+Solution: Check MySQL is running and credentials in server.js are correct
+
+Problem: "Unauthorized" error
+Solution: Clear browser cookies and login again
+
+Problem: "Cannot GET /"
+Solution: Make sure to access /login.html or /dashboard.html
+
+Problem: Activities not showing
+Solution: Click "Add Sample Data" button or add a crop to generate activity
+
+Problem: Port 5000 already in use
+Solution: Change PORT in server.js line 309 to another port (e.g., 3000)
+
+📱 TESTING:
+----------
+
+1. Login with test account
+2. Click "Add Sample Data" in Recent Activity section
+3. Add a new crop
+4. Add some tasks
+5. View analytics
+6. Test the chatbot
+
+🔒 SECURITY NOTES:
+-----------------
+
+For production:
+1. Change session secret in server.js
+2. Use bcrypt for password hashing
+3. Add HTTPS
+4. Use environment variables for sensitive data
+5. Add rate limiting
+6. Implement CSRF protection
+
+📞 SUPPORT:
+----------
+
+If you encounter issues:
+1. Check console for errors (F12 in browser)
+2. Check server terminal for error messages
+3. Verify database connection
+4. Make sure all files are in the same directory
+
+========================================
+ENJOY YOUR FARM DASHBOARD! 🌱
+========================================

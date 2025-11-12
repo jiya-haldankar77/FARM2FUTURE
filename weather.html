@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Weather Tracker - Farm2Future</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .weather-page {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e8f5e9 0%, #f0fdf4 50%, #e3f2fd 100%);
+      font-family: 'Poppins', sans-serif;
+      padding: 0;
+      margin: 0;
+    }
+
+    .weather-navbar {
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      padding: 20px 40px;
+      box-shadow: 0 4px 20px rgba(46, 125, 50, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .weather-navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: white;
+    }
+
+    .weather-navbar-brand i {
+      font-size: 32px;
+    }
+
+    .weather-navbar-brand h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .weather-back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .weather-back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateX(-5px);
+    }
+
+    .weather-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .weather-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .weather-card-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .weather-card-header h2 {
+      font-size: 32px;
+      color: #2e7d32;
+      margin: 0 0 10px 0;
+      font-weight: 700;
+    }
+
+    .weather-card-header p {
+      color: #666;
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .weather-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .weather-form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .weather-form-group label {
+      font-weight: 600;
+      color: #2e7d32;
+      margin-bottom: 10px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .weather-form-group select {
+      padding: 14px 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      background: white;
+      cursor: pointer;
+    }
+
+    .weather-form-group select:focus {
+      outline: none;
+      border-color: #2e7d32;
+      box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+    }
+
+    .weather-form-group select:hover {
+      border-color: #81c784;
+    }
+
+    .weather-submit-btn {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, #2e7d32, #43a047);
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .weather-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+    }
+
+    .weather-submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .weather-result {
+      margin-top: 40px;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .weather-info-card {
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+      border-left: 5px solid #2196f3;
+    }
+
+    .weather-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .weather-info-item {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .weather-info-item i {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .weather-info-item .value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+      display: block;
+      margin: 5px 0;
+    }
+
+    .weather-info-item .label {
+      font-size: 13px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .weather-advice-card {
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      border-radius: 16px;
+      padding: 25px;
+      border-left: 5px solid #4caf50;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .weather-advice-card::before {
+      content: '💡';
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 48px;
+      opacity: 0.2;
+    }
+
+    .weather-advice-card h3 {
+      color: #2e7d32;
+      margin: 0 0 15px 0;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .weather-advice-card p {
+      color: #1b5e20;
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .weather-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .weather-navbar {
+        padding: 15px 20px;
+      }
+
+      .weather-card {
+        padding: 25px;
+      }
+
+      .weather-info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #2e7d32;
+    }
+
+    .loading i {
+      font-size: 48px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="weather-page">
+  <!-- Navbar -->
+  <nav class="weather-navbar">
+    <div class="weather-navbar-brand">
+      <i class="fas fa-cloud-sun"></i>
+      <h1>🌿 Smart Weather Tracker</h1>
+    </div>
+    <button onclick="goBack()" class="weather-back-btn">
+      <i class="fas fa-arrow-left"></i>
+      Back to Dashboard
+    </button>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="weather-container">
+    <div class="weather-card">
+      <div class="weather-card-header">
+        <h2>Weather-Based Crop Advice</h2>
+        <p>Get real-time weather data and smart farming recommendations</p>
+      </div>
+
+      <div class="weather-controls">
+        <div class="weather-form-group">
+          <label for="state">
+            <i class="fas fa-map-marker-alt"></i>
+            Select State / UT
+          </label>
+          <select id="state" onchange="loadCrops()">
+            <option value="">-- Choose your state --</option>
+          </select>
+        </div>
+
+        <div class="weather-form-group">
+          <label for="crop">
+            <i class="fas fa-seedling"></i>
+            Select Crop
+          </label>
+          <select id="crop">
+            <option value="">-- Choose your crop --</option>
+          </select>
+        </div>
+
+        <button onclick="getSmartWeather()" class="weather-submit-btn">
+          <i class="fas fa-cloud-sun"></i>
+          Get Smart Weather Advice
+        </button>
+      </div>
+
+      <!-- Weather Result -->
+      <div class="weather-result" id="weatherResult" style="display:none;">
+        <div class="weather-info-card">
+          <h3 style="color: #1976d2; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-cloud-sun"></i>
+            Current Weather Conditions
+          </h3>
+          <div class="weather-info-grid" id="weatherInfoGrid">
+            <!-- Weather data will be inserted here -->
+          </div>
+        </div>
+
+        <div class="weather-advice-card">
+          <h3>
+            <i class="fas fa-lightbulb"></i>
+            Smart Farming Advice
+          </h3>
+          <p id="advice"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="weather.js"></script>
+  
+  <!-- Voice Guide Feature for Weather Tracker -->
+  <script src="voice-guide-weather.js"></script>
+</body>
+</html>
