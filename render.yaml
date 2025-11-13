@@ -43,6 +43,8 @@ services:
         fromDatabase:
           name: farm2future-db
           property: connectionString
+      - key: ML_API_URL
+        value: https://farm2future-ml.onrender.com/api/analyze-soil
 
   # 🤖 Flask ML Model API (Soil Image Analysis)
   - type: web

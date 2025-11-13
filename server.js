@@ -49,7 +49,7 @@ const dbConfig = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  ssl: process.env.NODE_ENV === 'production' && process.env.DB_HOST !== 'localhost' ? { rejectUnauthorized: false } : false
 };
 
 // Fix incomplete hostname in DATABASE_URL
@@ -414,12 +414,15 @@ app.post('/api/analyze-soil', async (req, res) => {
         formData.append('image', req.body);
       }
       
-      console.log('Connecting to ML API at localhost:5001...');
+      // Determine ML API URL based on environment
+      const ML_API_URL = process.env.ML_API_URL || 'http://localhost:5001/api/analyze-soil';
       
-      const mlResponse = await fetch('http://localhost:5001/analyze-soil', {
+      console.log('Connecting to ML API at:', ML_API_URL);
+      
+      const mlResponse = await fetch(ML_API_URL, {
         method: 'POST',
         body: formData,
-        timeout: 10000 // 10 second timeout
+        timeout: 30000 // 30 second timeout for production
       });
       
       if (mlResponse.ok) {
