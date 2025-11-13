@@ -95,8 +95,37 @@ soil_info = {
     }
 }
 
-@app.route('/api/analyze-soil', methods=['POST'])
+@app.route('/')
+def root():
+    return jsonify({
+        'service': 'Farm2Future Soil Analysis API',
+        'status': 'running',
+        'model_type': MODEL_TYPE,
+        'version': '1.0',
+        'endpoints': {
+            'health': '/health',
+            'analyze_soil': '/api/analyze-soil',
+            'reload_model': '/api/reload-model'
+        },
+        'usage': 'This is a REST API for soil analysis. Use POST /api/analyze-soil with image data.'
+    })
+
+@app.route('/api/analyze-soil', methods=['GET', 'POST'])
 def analyze_soil():
+    if request.method == 'GET':
+        return jsonify({
+            'message': 'Soil Analysis API is working!',
+            'usage': 'Send POST request with image file',
+            'model_type': MODEL_TYPE,
+            'available_classes': labels,
+            'endpoints': {
+                'health': '/health',
+                'analyze': '/api/analyze-soil (POST with image)',
+                'reload': '/api/reload-model (POST)'
+            }
+        })
+    
+    # Original POST logic
     try:
         if 'image' not in request.files:
             return jsonify({'error': 'No image file provided'}), 400
