@@ -10,6 +10,13 @@ import io
 app = Flask(__name__)
 CORS(app)
 
+# Add startup logging
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Startup logging will be done after model loading
+
 # Load the trained model and class mapping
 try:
     # Try to load the improved model first
@@ -52,6 +59,12 @@ except:
             model = MockModel()
             MODEL_TYPE = 'mock'
             labels = ["Black Soil", "Cinder Soil", "Laterite Soil", "Peat Soil", "Yellow Soil"]
+
+# Log startup info after model loading
+logger.info("🚀 Soil Analysis API initialized")
+logger.info(f"📊 Model type: {MODEL_TYPE}")
+logger.info(f"🏷️  Classes: {len(labels)} soil types")
+logger.info("🌐 Ready to serve requests!")
 
 # Define soil types and their suitable crops
 soil_info = {
@@ -176,4 +189,5 @@ def reload_model():
 if __name__ == '__main__':
     import os
     port = int(os.environ.get('PORT', 5001))
+    print(f"🚀 Starting Flask app on port {port}")
     app.run(host='0.0.0.0', port=port, debug=False)
