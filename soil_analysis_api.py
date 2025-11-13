@@ -10,18 +10,31 @@ import io
 app = Flask(__name__)
 CORS(app)
 
-# Load the trained model
+# Load the trained model and class mapping
 try:
     # Try to load the improved model first
     model = tf.keras.models.load_model('soil_model_output_improved/models/soil_classifier_final.h5')
     print("✅ Improved CNN model loaded successfully!")
     MODEL_TYPE = 'improved'
+    
+    # Load class mapping from the improved model training
+    try:
+        import json
+        with open('soil_model_output_improved/class_mapping.json', 'r') as f:
+            class_mapping = json.load(f)
+        labels = [class_mapping[str(i)] for i in range(len(class_mapping))]
+        print(f"✅ Loaded class mapping: {labels}")
+    except:
+        print("⚠️ Could not load class mapping, using default labels")
+        labels = ["Black Soil", "Cinder Soil", "Laterite Soil", "Peat Soil", "Yellow Soil"]
+        
 except:
     try:
         # Fallback to old model
         model = tf.keras.models.load_model('soil_model.h5')
-        print("✅ Real CNN model loaded successfully!")
+        print("✅ Standard CNN model loaded successfully!")
         MODEL_TYPE = 'standard'
+        labels = ["Black Soil", "Cinder Soil", "Laterite Soil", "Peat Soil", "Yellow Soil"]
     except:
         print("⚠️ CNN model file not found. Using color-based classifier...")
         # Fallback to simple color-based classifier
@@ -30,6 +43,7 @@ except:
             model = SimpleSoilClassifier()
             print("✅ Simple color-based classifier loaded!")
             MODEL_TYPE = 'simple'
+            labels = ["Black Soil", "Cinder Soil", "Laterite Soil", "Peat Soil", "Yellow Soil"]
         except:
             print("⚠️ Using random mock model for testing.")
             class MockModel:
@@ -37,6 +51,7 @@ except:
                     return np.random.rand(1, 5)
             model = MockModel()
             MODEL_TYPE = 'mock'
+            labels = ["Black Soil", "Cinder Soil", "Laterite Soil", "Peat Soil", "Yellow Soil"]
 
 # Define soil types and their suitable crops
 soil_info = {
@@ -66,8 +81,6 @@ soil_info = {
         "fertilizers": ["NPK 20-20-20", "Organic matter", "Green manure"]
     }
 }
-
-labels = ["Black Soil", "Cinder Soil", "Laterite Soil", "Peat Soil", "Yellow Soil"]
 
 @app.route('/api/analyze-soil', methods=['POST'])
 def analyze_soil():
@@ -117,7 +130,50 @@ def analyze_soil():
 
 @app.route('/health', methods=['GET'])
 def health():
-    return jsonify({'status': 'healthy'})
+    return jsonify({
+        'status': 'healthy',
+        'model_type': MODEL_TYPE,
+        'num_classes': len(labels),
+        'class_names': labels
+    })
+
+@app.route('/api/reload-model', methods=['POST'])
+def reload_model():
+    """Reload the model after retraining"""
+    global model, MODEL_TYPE, labels
+    
+    try:
+        # Try to load the improved model first
+        new_model = tf.keras.models.load_model('soil_model_output_improved/models/soil_classifier_final.h5')
+        
+        # Load class mapping
+        try:
+            import json
+            with open('soil_model_output_improved/class_mapping.json', 'r') as f:
+                class_mapping = json.load(f)
+            new_labels = [class_mapping[str(i)] for i in range(len(class_mapping))]
+        except:
+            new_labels = ["Black Soil", "Cinder Soil", "Laterite Soil", "Peat Soil", "Yellow Soil"]
+        
+        # Update global variables
+        model = new_model
+        MODEL_TYPE = 'improved'
+        labels = new_labels
+        
+        return jsonify({
+            'success': True,
+            'message': 'Model reloaded successfully',
+            'model_type': MODEL_TYPE,
+            'class_names': labels
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'Failed to reload model: {str(e)}'
+        }), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    import os
+    port = int(os.environ.get('PORT', 5001))
+    app.run(host='0.0.0.0', port=port, debug=False)
